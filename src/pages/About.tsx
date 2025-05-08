@@ -96,14 +96,38 @@ const About = () => {
             </p>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-              <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
+                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
+              </div>
             </div>
           </div>
         </section>
