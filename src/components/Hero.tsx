@@ -21,6 +21,9 @@ const Hero = () => {
               <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-mindful-600 text-mindful-600 hover:bg-mindful-50">
                 <Link to="/resources">Explore Resources</Link>
               </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-calm-600 text-calm-600 hover:bg-calm-50">
+                <Link to="/mental-health-first-aid">Mental Health First Aid</Link>
+              </Button>
             </div>
           </div>
           <div className="md:w-1/2 relative">
