@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 const Hero = () => {
@@ -9,17 +10,17 @@ const Hero = () => {
               Your Journey to <span className="gradient-text bg-gradient-to-r from-mindful-600 to-calm-600 inline-block text-transparent bg-clip-text">Mental Wellness</span> Starts Here
             </h1>
             <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl">
-              Connect with trusted therapists, explore helpful resources, and join a community that understands your mental health journey.
+              Connect with trusted therapists, explore helpful resources, and join our newsletter for mental health insights.
             </p>
             <div className="mt-10 flex flex-wrap gap-4 relative z-20">
-              <Button asChild size="lg" className="bg-mindful-600 hover:bg-mindful-700 rounded-full px-8" aria-label="Find a therapist">
-                <Link to="/therapist-finder">Find a Therapist</Link>
+              <Button asChild size="lg" className="bg-mindful-600 hover:bg-mindful-700 rounded-full px-8" aria-label="Find help for mental health">
+                <Link to="/finding-help">Find Help</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-mindful-600 text-mindful-600 hover:bg-mindful-50" aria-label="Explore mental health resources">
                 <Link to="/resources">Explore Resources</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-calm-600 text-calm-600 hover:bg-calm-50" aria-label="Join our mental health community">
-                <Link to="/signup">Join Our Community</Link>
+              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-calm-600 text-calm-600 hover:bg-calm-50" aria-label="Join our mental health newsletter">
+                <Link to="/signup">Join Our Newsletter</Link>
               </Button>
             </div>
           </div>

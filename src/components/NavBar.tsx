@@ -30,12 +30,11 @@ const NavBar = () => {
           
           <div className="hidden md:ml-6 md:flex md:items-center md:space-x-8">
             <NavLink to="/">Home</NavLink>
-            <NavLink to="/therapist-finder">Find a Therapist</NavLink>
+            <NavLink to="/finding-help">Finding Help</NavLink>
             <NavLink to="/blog">Blog</NavLink>
             <NavLink to="/resources">Resources</NavLink>
-            <Button size="sm" className="bg-calm-600 hover:bg-calm-700" asChild>
-              <Link to="/resources">Get Help</Link>
-            </Button>
+            <NavLink to="/about">About Us</NavLink>
+            <NavLink to="/contact">Contact</NavLink>
           </div>
           
           <div className="flex items-center md:hidden">
@@ -62,12 +61,11 @@ const NavBar = () => {
       )}>
         <div className="pt-2 pb-3 space-y-1 px-2">
           <MobileNavLink to="/" onClick={toggleMenu}>Home</MobileNavLink>
-          <MobileNavLink to="/therapist-finder" onClick={toggleMenu}>Find a Therapist</MobileNavLink>
+          <MobileNavLink to="/finding-help" onClick={toggleMenu}>Finding Help</MobileNavLink>
           <MobileNavLink to="/blog" onClick={toggleMenu}>Blog</MobileNavLink>
           <MobileNavLink to="/resources" onClick={toggleMenu}>Resources</MobileNavLink>
-          <Button size="sm" className="w-full mt-4 bg-calm-600 hover:bg-calm-700" asChild>
-            <Link to="/resources">Get Help</Link>
-          </Button>
+          <MobileNavLink to="/about" onClick={toggleMenu}>About Us</MobileNavLink>
+          <MobileNavLink to="/contact" onClick={toggleMenu}>Contact</MobileNavLink>
         </div>
       </div>
     </nav>
