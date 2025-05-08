@@ -1,3 +1,4 @@
+
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +19,11 @@ const About = () => {
               </div>
               <div className="md:w-1/2">
                 <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl">
-                  <img alt="Team of mental health professionals collaborating" className="w-full h-full object-cover" src="/lovable-uploads/2093256e-3eac-487b-b829-d32e363ac083.jpg" />
+                  <img 
+                    alt="Team of mental health professionals collaborating" 
+                    className="w-full h-full object-contain" 
+                    src="/lovable-uploads/2093256e-3eac-487b-b829-d32e363ac083.jpg" 
+                  />
                 </div>
               </div>
             </div>
