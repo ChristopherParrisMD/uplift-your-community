@@ -45,12 +45,17 @@ const BlogCard = ({ post, className, variant = "default" }: BlogCardProps) => {
         )}>
           <Link to={`/blog/${post.id}`}>
             <img 
-              src={post.image} 
+              src={post.image.replace(/\?.*$/, "") + "?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} 
               alt={post.title} 
               className={cn(
                 "w-full h-60 object-cover transition-transform duration-300 group-hover:scale-105",
                 isFeatured ? "md:h-full" : ""
               )}
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80";
+              }}
             />
           </Link>
           <Badge 
@@ -91,9 +96,14 @@ const BlogCard = ({ post, className, variant = "default" }: BlogCardProps) => {
           
           <CardFooter className="px-6 pb-6 pt-0 flex items-center">
             <img 
-              src={post.author.avatar} 
+              src={post.author.avatar.replace(/\?.*$/, "") + "?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"}
               alt={post.author.name} 
               className="w-10 h-10 rounded-full mr-3 object-cover"
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "https://images.unsplash.com/photo-1518799175676-a0fed7996acb?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80";
+              }}
             />
             <div>
               <p className="font-medium text-gray-900">{post.author.name}</p>

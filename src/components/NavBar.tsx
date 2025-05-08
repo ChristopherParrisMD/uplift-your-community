@@ -1,16 +1,22 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   return (
     <nav className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b shadow-sm">
@@ -27,7 +33,9 @@ const NavBar = () => {
             <NavLink to="/therapist-finder">Find a Therapist</NavLink>
             <NavLink to="/blog">Blog</NavLink>
             <NavLink to="/resources">Resources</NavLink>
-            <Button size="sm" className="bg-calm-600 hover:bg-calm-700">Get Help</Button>
+            <Button size="sm" className="bg-calm-600 hover:bg-calm-700" asChild>
+              <Link to="/resources">Get Help</Link>
+            </Button>
           </div>
           
           <div className="flex items-center md:hidden">
@@ -57,7 +65,9 @@ const NavBar = () => {
           <MobileNavLink to="/therapist-finder" onClick={toggleMenu}>Find a Therapist</MobileNavLink>
           <MobileNavLink to="/blog" onClick={toggleMenu}>Blog</MobileNavLink>
           <MobileNavLink to="/resources" onClick={toggleMenu}>Resources</MobileNavLink>
-          <Button size="sm" className="w-full mt-4 bg-calm-600 hover:bg-calm-700">Get Help</Button>
+          <Button size="sm" className="w-full mt-4 bg-calm-600 hover:bg-calm-700" asChild>
+            <Link to="/resources">Get Help</Link>
+          </Button>
         </div>
       </div>
     </nav>
@@ -66,7 +76,8 @@ const NavBar = () => {
 
 // Desktop Navigation Link
 const NavLink = ({ to, children }: { to: string; children: React.ReactNode }) => {
-  const isActive = window.location.pathname === to;
+  const location = useLocation();
+  const isActive = location.pathname === to;
   
   return (
     <Link
@@ -86,7 +97,8 @@ const NavLink = ({ to, children }: { to: string; children: React.ReactNode }) =>
 
 // Mobile Navigation Link
 const MobileNavLink = ({ to, onClick, children }: { to: string; onClick: () => void; children: React.ReactNode }) => {
-  const isActive = window.location.pathname === to;
+  const location = useLocation();
+  const isActive = location.pathname === to;
 
   return (
     <Link

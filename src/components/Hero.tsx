@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <div className="hero-pattern relative overflow-hidden">
+    <div className="hero-pattern relative overflow-hidden bg-gradient-to-br from-mindful-50 to-calm-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-20 md:py-28 flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 md:pr-8 mb-10 md:mb-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Your Journey to <span className="gradient-text">Mental Wellness</span> Starts Here
+              Your Journey to <span className="gradient-text bg-gradient-to-r from-mindful-600 to-calm-600 inline-block text-transparent bg-clip-text">Mental Wellness</span> Starts Here
             </h1>
             <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl">
               Connect with trusted therapists, explore helpful resources, and join a community that understands your mental health journey.
@@ -26,9 +26,10 @@ const Hero = () => {
           <div className="md:w-1/2 relative">
             <div className="relative w-full h-64 md:h-96 animate-float">
               <img
-                src="https://images.unsplash.com/photo-1573497019703-b51911530f5a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                src="https://images.unsplash.com/photo-1573497019703-b51911530f5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
                 alt="People supporting each other"
                 className="w-full h-full object-cover rounded-2xl shadow-xl"
+                loading="eager"
               />
               <div className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 bg-white rounded-2xl p-4 shadow-lg w-40 md:w-64">
                 <div className="text-xs md:text-sm text-gray-500">Your wellness matters</div>
