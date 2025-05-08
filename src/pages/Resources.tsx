@@ -11,18 +11,6 @@ const Resources = () => {
       <NavBar />
       
       <main className="flex-grow bg-gray-50">
-        {/* Hero Section */}
-        <section className="bg-white py-16 md:py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold">Mental Health Resources</h1>
-              <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-                Access expert-curated tools and information to support your mental health journey, whether you're seeking help or learning how to support others.
-              </p>
-            </div>
-          </div>
-        </section>
-        
         {/* Crisis Resources Section */}
         <section className="py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
