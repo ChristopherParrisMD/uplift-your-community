@@ -22,19 +22,19 @@ const Hero = () => {
                 <Link to="/resources">Explore Resources</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-calm-600 text-calm-600 hover:bg-calm-50">
-                <Link to="/mental-health-first-aid">Mental Health First Aid</Link>
+                <Link to="/signup">Join Our Community</Link>
               </Button>
             </div>
           </div>
           <div className="md:w-1/2 relative">
             <div className="relative w-full h-64 md:h-96 animate-float">
               <img
-                src="https://images.unsplash.com/photo-1573497019703-b51911530f5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                alt="People supporting each other"
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Person using a laptop for mental wellness"
                 className="w-full h-full object-cover rounded-2xl shadow-xl"
                 loading="eager"
               />
-              <div className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 bg-white rounded-2xl p-4 shadow-lg w-40 md:w-64">
+              <div className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 bg-white rounded-2xl p-4 shadow-lg w-40 md:w-64 z-10">
                 <div className="text-xs md:text-sm text-gray-500">Your wellness matters</div>
                 <div className="font-semibold text-sm md:text-base mt-1">83% of people report feeling better after therapy</div>
               </div>
@@ -43,8 +43,8 @@ const Hero = () => {
         </div>
       </div>
       
-      {/* Curved shape divider */}
-      <div className="absolute bottom-0 left-0 right-0">
+      {/* Curved shape divider - making sure it doesn't block interaction */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
           <path 
             fill="#ffffff" 

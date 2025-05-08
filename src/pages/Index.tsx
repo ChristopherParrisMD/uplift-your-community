@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -95,7 +94,7 @@ const Index = () => {
                 title="Supportive Community"
                 description="Connect with others in moderated forums and support groups focused on specific mental health topics."
                 linkText="Join our community"
-                linkUrl="/community"
+                linkUrl="/signup"
               />
             </div>
           </div>
@@ -235,7 +234,7 @@ const Index = () => {
               <Button asChild size="lg" className="bg-white text-mindful-700 hover:bg-gray-100 rounded-full px-8">
                 <Link to="/therapist-finder">Find a Therapist</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-mindful-700 rounded-full px-8">
+              <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-mindful-700 rounded-full px-8 text-blue-400">
                 <Link to="/resources">Explore Resources</Link>
               </Button>
             </div>

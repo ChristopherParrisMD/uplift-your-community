@@ -9,6 +9,7 @@ import TherapistFinder from "./pages/TherapistFinder";
 import Blog from "./pages/Blog";
 import Resources from "./pages/Resources";
 import MentalHealthFirstAid from "./pages/MentalHealthFirstAid";
+import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/mental-health-first-aid" element={<MentalHealthFirstAid />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
