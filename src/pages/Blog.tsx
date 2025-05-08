@@ -3,7 +3,6 @@ import { useState } from "react";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/BlogCard";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -91,16 +90,11 @@ const categories = [
 ];
 
 const Blog = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   
-  // Filter posts based on search query and category
+  // Filter posts based on category only (removed search filtering)
   const filteredPosts = allPosts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === "All" || post.category === activeCategory;
-    
-    return matchesSearch && matchesCategory;
+    return activeCategory === "All" || post.category === activeCategory;
   });
   
   return (
@@ -108,7 +102,7 @@ const Blog = () => {
       <NavBar />
       
       <main className="flex-grow bg-white">
-        {/* Hero Section */}
+        {/* Hero Section - Removed search bar */}
         <section className="bg-gradient-to-b from-mindful-50 to-white py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto">
@@ -116,23 +110,6 @@ const Blog = () => {
               <p className="mt-6 text-xl text-gray-600">
                 Research-backed articles, expert insights, and news on the latest developments in mental health care.
               </p>
-              
-              <div className="mt-10">
-                <div className="relative max-w-xl mx-auto">
-                  <Input
-                    type="text"
-                    placeholder="Search articles..."
-                    className="pl-10 pr-4 py-3 rounded-full"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -174,7 +151,7 @@ const Blog = () => {
               <div className="text-center py-12">
                 <h3 className="text-xl font-medium mb-2">No articles found</h3>
                 <p className="text-gray-600">
-                  Try adjusting your search or filter to find what you're looking for.
+                  Try adjusting your filter to find what you're looking for.
                 </p>
               </div>
             )}
@@ -193,7 +170,7 @@ const Blog = () => {
               <form className="mt-8 max-w-lg mx-auto">
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-grow">
-                    <Input type="email" placeholder="Your email address" className="w-full" required />
+                    <input type="email" placeholder="Your email address" className="w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-10 flex" required />
                   </div>
                   <Button type="submit" className="bg-mindful-600 hover:bg-mindful-700">Subscribe</Button>
                 </div>
