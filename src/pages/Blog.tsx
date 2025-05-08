@@ -7,104 +7,87 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Sample blog data
+// Updated blog data with real articles
 const allPosts = [
   {
     id: 1,
-    title: "Understanding Anxiety: Symptoms, Causes and Treatment Options",
-    excerpt: "Anxiety disorders affect millions of people. Learn about common symptoms and evidence-based treatments that can help manage anxiety effectively.",
+    title: "Teens With Mental Health Conditions Use Social Media Differently Than Their Peers",
+    excerpt: "This groundbreaking study is one of the first to use clinical-level diagnoses to reveal distinct differences in social media usage patterns between teens with mental health conditions and their peers.",
     author: {
-      name: "Dr. Jessica Chen",
-      role: "Clinical Psychologist",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+      name: "ScienceDaily",
+      role: "Research Publication",
+      avatar: "https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
     },
-    publishDate: "May 4, 2025",
-    readTime: "6 min read",
-    category: "Anxiety",
-    image: "https://images.unsplash.com/photo-1558021212-51b6ecfa0db9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    publishDate: "May 5, 2025",
+    readTime: "8 min read",
+    category: "Research",
+    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
   },
   {
     id: 2,
-    title: "The Science Behind Mindfulness Meditation",
-    excerpt: "Research shows that regular mindfulness practice can reduce stress and improve mental clarity. We explore how it works in the brain.",
+    title: "New Non-Invasive Brain Stimulation Technique Shows Significant Reduction in Depression, Anxiety and PTSD Symptoms",
+    excerpt: "This research demonstrates how a novel sound wave therapy can directly target deep brain regions, offering significant reductions in symptoms of depression, anxiety, and PTSD.",
     author: {
-      name: "Dr. Robert Williams",
-      role: "Neuroscientist",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+      name: "ScienceDaily",
+      role: "Research Publication",
+      avatar: "https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
     },
     publishDate: "Apr 28, 2025",
-    readTime: "8 min read",
-    category: "Mindfulness",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    readTime: "10 min read",
+    category: "Treatment",
+    image: "https://images.unsplash.com/photo-1587573089734-599851b2c3b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
   },
   {
     id: 3,
-    title: "Breaking the Stigma: Why Mental Health Matters",
-    excerpt: "Mental health stigma prevents many from seeking help. Learn how to recognize stigma and be part of the solution in your community.",
+    title: "How a Smartphone App Could Transform Mental Health Care",
+    excerpt: "This article explores how smartphones, often considered sources of stress, could actually become powerful solutions for mental health treatment through innovative applications.",
     author: {
-      name: "Maya Thompson",
-      role: "Mental Health Advocate",
-      avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+      name: "ScienceDaily",
+      role: "Research Publication",
+      avatar: "https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
     },
-    publishDate: "Apr 21, 2025",
-    readTime: "5 min read",
-    category: "Advocacy",
-    image: "https://images.unsplash.com/photo-1541119638723-c51cbe2262aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    publishDate: "Apr 23, 2025",
+    readTime: "7 min read",
+    category: "Technology",
+    image: "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
   },
   {
     id: 4,
-    title: "Depression in Youth: Warning Signs and How to Help",
-    excerpt: "Teenage depression is on the rise. Learn how to identify warning signs and provide support to young people who may be struggling.",
+    title: "What happens when people put their phones down and eat together?",
+    excerpt: "This article examines the mental health benefits of \"Community Plate\" initiatives that bring people together over shared potluck suppers, promoting social connection.",
     author: {
-      name: "Dr. Amanda Lee",
-      role: "Child Psychologist",
-      avatar: "https://images.unsplash.com/photo-1553697388-94e804e2f0f6?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+      name: "NPR",
+      role: "News Publication",
+      avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
     },
-    publishDate: "Apr 14, 2025",
-    readTime: "7 min read",
-    category: "Depression",
-    image: "https://images.unsplash.com/photo-1534644107580-3a4dbd494a95?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    publishDate: "May 7, 2025",
+    readTime: "6 min read",
+    category: "Connection",
+    image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
   },
   {
     id: 5,
-    title: "5 Evidence-Based Ways to Boost Your Mental Resilience",
-    excerpt: "Resilience isn't just something you're born with—it can be developed. Discover science-backed strategies to strengthen your psychological resilience.",
+    title: "Psychotherapy Becoming More Accessible",
+    excerpt: "This study from the American Journal of Psychiatry suggests that more people are starting and staying with psychotherapy than in previous years, indicating improved accessibility to mental health treatment.",
     author: {
-      name: "Dr. Sophia Patel",
-      role: "Positive Psychology Researcher",
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+      name: "NPR",
+      role: "News Publication",
+      avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
     },
-    publishDate: "Apr 7, 2025",
-    readTime: "6 min read",
-    category: "Self-Care",
-    image: "https://images.unsplash.com/photo-1562104037-e331486b7701?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 6,
-    title: "Navigating Grief: A Compass for the Journey",
-    excerpt: "Grief is a universal human experience, yet everyone's journey is unique. Learn healthy ways to process loss and find meaning again.",
-    author: {
-      name: "Dr. Marcus Bennett",
-      role: "Grief Counselor",
-      avatar: "https://images.unsplash.com/photo-1542740348-39501cd6e2b4?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    publishDate: "Mar 31, 2025",
-    readTime: "9 min read",
-    category: "Grief",
-    image: "https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    publishDate: "May 5, 2025",
+    readTime: "5 min read",
+    category: "Accessibility",
+    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
   }
 ];
 
 const categories = [
   "All",
-  "Anxiety",
-  "Depression",
-  "Mindfulness",
-  "Self-Care",
-  "Relationships",
-  "Grief",
-  "Trauma",
-  "Advocacy",
+  "Research",
+  "Treatment",
+  "Technology",
+  "Connection",
+  "Accessibility",
 ];
 
 const Blog = () => {
@@ -131,7 +114,7 @@ const Blog = () => {
             <div className="text-center max-w-3xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold">Mental Health Insights</h1>
               <p className="mt-6 text-xl text-gray-600">
-                Research-backed articles, expert interviews, and personal stories to support your mental well-being journey.
+                Research-backed articles, expert insights, and news on the latest developments in mental health care.
               </p>
               
               <div className="mt-10">
@@ -204,7 +187,7 @@ const Blog = () => {
             <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 text-center max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold">Stay Updated on Mental Wellness</h2>
               <p className="mt-4 text-lg text-gray-600">
-                Join our newsletter for the latest articles, resources, and expert tips delivered to your inbox.
+                Join our newsletter for the latest research, articles, and expert tips delivered to your inbox.
               </p>
               
               <form className="mt-8 max-w-lg mx-auto">
