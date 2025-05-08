@@ -197,6 +197,14 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
 // Update an existing blog post
 export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promise<BlogPost | null> => {
   try {
+    // Check authentication
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.error('User not authenticated');
+      return null;
+    }
+    
     const updateData: any = {};
     
     if (post.title) updateData.title = post.title;
@@ -204,6 +212,7 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
     if (post.content) updateData.content = post.content;
     if (post.excerpt) updateData.excerpt = post.excerpt;
     if (post.image_url) updateData.featured_image = post.image_url;
+    updateData.updated_at = new Date().toISOString();
     
     const { data, error } = await supabase
       .from('posts')
@@ -242,6 +251,14 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
 // Delete a blog post
 export const deleteBlogPost = async (id: string): Promise<boolean> => {
   try {
+    // Check authentication
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.error('User not authenticated');
+      return false;
+    }
+    
     const { error } = await supabase
       .from('posts')
       .delete()
