@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -59,27 +59,13 @@ const Contact = () => {
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-3 gap-8">
-              {/* Contact Info Cards */}
-              <div className="space-y-6">
+              {/* Contact Info Card - Email Only */}
+              <div>
                 <ContactCard 
                   icon={<Mail className="h-6 w-6 text-mindful-600" />}
                   title="Email Us"
                   content="support@myinsightally.com"
                   description="For general inquiries and support"
-                />
-                
-                <ContactCard 
-                  icon={<Phone className="h-6 w-6 text-mindful-600" />}
-                  title="Call Us"
-                  content="(555) 123-4567"
-                  description="Mon-Fri, 9:00 AM - 5:00 PM EST"
-                />
-                
-                <ContactCard 
-                  icon={<MapPin className="h-6 w-6 text-mindful-600" />}
-                  title="Visit Us"
-                  content="123 Wellness Avenue, Suite 200, Springfield, IL 62701"
-                  description="By appointment only"
                 />
               </div>
               
