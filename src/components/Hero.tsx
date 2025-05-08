@@ -34,6 +34,7 @@ const Hero = () => {
                 className="w-full h-full object-cover rounded-2xl shadow-xl"
                 width={600}
                 height={400}
+                priority={true}
               />
               <div className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 bg-white rounded-2xl p-4 shadow-lg w-40 md:w-64 z-10">
                 <div className="text-xs md:text-sm text-gray-500">Your wellness matters</div>

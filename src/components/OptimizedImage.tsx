@@ -7,6 +7,7 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   alt: string;
   className?: string;
   placeholderClassName?: string;
+  priority?: boolean; // Add priority flag for critical images
 }
 
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -14,14 +15,24 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   alt,
   className,
   placeholderClassName,
+  priority = false,
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [isIntersecting, setIsIntersecting] = useState(priority); // Start loading immediately if priority
+  const uniqueId = `image-${src.replace(/[^a-zA-Z0-9]/g, '')}`;
   
   useEffect(() => {
+    // Preload high priority images
+    if (priority && !isLoaded) {
+      const preloadImage = new Image();
+      preloadImage.src = src;
+      preloadImage.onload = () => setIsLoaded(true);
+      return;
+    }
+    
     // Only set up the intersection observer if needed
-    if (!isIntersecting) {
+    if (!isIntersecting && !priority) {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -31,11 +42,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
             }
           });
         },
-        { rootMargin: '200px' } // Start loading when image is 200px from viewport
+        { 
+          rootMargin: '200px',  // Start loading when image is 200px from viewport
+          threshold: 0.01 // Trigger when even a small portion is visible
+        }
       );
       
       // Create a ref element to observe
-      const element = document.getElementById(`image-${src.replace(/[^a-zA-Z0-9]/g, '')}`);
+      const element = document.getElementById(uniqueId);
       if (element) {
         observer.observe(element);
       }
@@ -47,11 +61,32 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         observer.disconnect();
       };
     }
-  }, [src, isIntersecting]);
+  }, [src, isIntersecting, uniqueId, priority, isLoaded]);
+  
+  // Add image to browser cache on page load for important images
+  useEffect(() => {
+    // For non-priority images that might be needed soon, we can still prefetch them
+    // when the component mounts but with lower priority
+    if (!priority && !isIntersecting) {
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.as = 'image';
+      link.href = src;
+      link.id = `prefetch-${uniqueId}`;
+      document.head.appendChild(link);
+      
+      return () => {
+        const existingLink = document.getElementById(`prefetch-${uniqueId}`);
+        if (existingLink) {
+          document.head.removeChild(existingLink);
+        }
+      };
+    }
+  }, [src, uniqueId, priority, isIntersecting]);
   
   return (
     <div 
-      id={`image-${src.replace(/[^a-zA-Z0-9]/g, '')}`} 
+      id={uniqueId}
       className={cn("relative overflow-hidden", className)}
     >
       {!isLoaded && (
@@ -63,12 +98,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         />
       )}
       
-      {isIntersecting && (
+      {(isIntersecting || priority) && (
         <img
           src={src}
           alt={alt}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          decoding={priority ? "sync" : "async"}
           onLoad={() => setIsLoaded(true)}
+          fetchPriority={priority ? "high" : "auto"}
           className={cn(
             "transition-opacity duration-300",
             isLoaded ? "opacity-100" : "opacity-0",

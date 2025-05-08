@@ -11,6 +11,8 @@
     <!-- Performance optimizations -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
     <meta name="theme-color" content="#ffffff" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
@@ -27,6 +29,14 @@
     <!-- Preload critical assets -->
     <link rel="preload" href="/src/index.css" as="style">
     <link rel="preload" href="/src/main.tsx" as="script">
+    
+    <!-- Preload key images -->
+    <link rel="preload" href="/lovable-uploads/a2402e42-aa50-4aee-8f6b-3dc24512ed6c.jpg" as="image" fetchpriority="high">
+    
+    <!-- Add image CDN for future implementation -->
+    <script>
+      window.imageCacheBuster = Date.now().toString(36);
+    </script>
   </head>
 
   <body>
