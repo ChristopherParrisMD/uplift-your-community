@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -28,7 +29,6 @@ const Footer = () => {
             <ul className="mt-4 space-y-3">
               <FooterLink to="/about">About Us</FooterLink>
               <FooterLink to="/contact">Contact</FooterLink>
-              <FooterLink to="/therapist-directory">For Therapists</FooterLink>
               <FooterLink to="/privacy">Privacy</FooterLink>
               <FooterLink to="/terms">Terms</FooterLink>
             </ul>
