@@ -29,8 +29,8 @@ const Hero = () => {
           <div className="md:w-1/2 relative">
             <div className="relative w-full h-64 md:h-96 animate-float">
               <img
-                src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                alt="Woman enjoying time with family at a park"
+                src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Sunlight through trees representing peace and mental clarity"
                 className="w-full h-full object-cover rounded-2xl shadow-xl"
                 loading="eager"
               />
