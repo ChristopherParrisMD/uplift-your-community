@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost } from "@/services/blogService";
@@ -7,13 +8,13 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Edit, Trash2, Plus, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const BlogAdmin = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -67,17 +68,35 @@ const BlogAdmin = () => {
     e.preventDefault();
     
     try {
+      if (!user) {
+        toast({ 
+          title: "Authentication required", 
+          description: "You must be logged in to create or edit posts", 
+          variant: "destructive" 
+        });
+        return;
+      }
+
       if (editingId) {
         await updateBlogPost(editingId, formData);
         toast({ title: "Blog post updated successfully" });
       } else {
-        await createBlogPost(formData as Omit<BlogPost, 'id' | 'created_at'>);
-        toast({ title: "Blog post created successfully" });
+        const result = await createBlogPost(formData as Omit<BlogPost, 'id' | 'created_at'>);
+        if (result) {
+          toast({ title: "Blog post created successfully" });
+        } else {
+          toast({ 
+            title: "Error creating blog post", 
+            description: "Please try again or check console for details", 
+            variant: "destructive" 
+          });
+        }
       }
       
       resetForm();
       refetch();
     } catch (error) {
+      console.error("Form submission error:", error);
       toast({ 
         title: "Error saving blog post", 
         description: "Please try again", 
@@ -108,10 +127,19 @@ const BlogAdmin = () => {
   const confirmDelete = async () => {
     if (postToDelete) {
       try {
-        await deleteBlogPost(postToDelete);
-        toast({ title: "Blog post deleted successfully" });
-        refetch();
+        const success = await deleteBlogPost(postToDelete);
+        if (success) {
+          toast({ title: "Blog post deleted successfully" });
+          refetch();
+        } else {
+          toast({ 
+            title: "Error deleting blog post", 
+            description: "Please try again", 
+            variant: "destructive" 
+          });
+        }
       } catch (error) {
+        console.error("Delete error:", error);
         toast({ 
           title: "Error deleting blog post", 
           description: "Please try again", 
@@ -119,6 +147,7 @@ const BlogAdmin = () => {
         });
       }
       setDeleteDialogOpen(false);
+      setPostToDelete(null);
     }
   };
   
@@ -145,6 +174,18 @@ const BlogAdmin = () => {
     navigate('/admin-login');
     toast({ title: "Signed out successfully" });
   };
+
+  // Pre-populate form with default author info if empty
+  useEffect(() => {
+    if (user && !formData.author_name) {
+      setFormData(prev => ({
+        ...prev,
+        author_name: user.email?.split('@')[0] || 'Admin User',
+        author_role: 'Content Manager',
+        author_avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      }));
+    }
+  }, [user, formData.author_name]);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -351,29 +392,29 @@ const BlogAdmin = () => {
               <p>No blog posts yet. Create your first one!</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="pb-3 pr-4">Title</th>
-                      <th className="pb-3 px-4">Category</th>
-                      <th className="pb-3 px-4">Published</th>
-                      <th className="pb-3 pl-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Published</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {blogPosts.map((post) => (
-                      <tr key={post.id} className="border-b last:border-0 hover:bg-gray-50">
-                        <td className="py-4 pr-4">
+                      <TableRow key={post.id}>
+                        <TableCell>
                           <div className="font-medium">{post.title}</div>
                           <div className="text-sm text-gray-500">/blog/{post.slug}</div>
-                        </td>
-                        <td className="py-4 px-4">
+                        </TableCell>
+                        <TableCell>
                           <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 rounded-full">
                             {post.category}
                           </span>
-                        </td>
-                        <td className="py-4 px-4">{post.publish_date}</td>
-                        <td className="py-4 pl-4 text-right">
+                        </TableCell>
+                        <TableCell>{post.publish_date}</TableCell>
+                        <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button 
                               variant="ghost" 
@@ -393,11 +434,11 @@ const BlogAdmin = () => {
                               <Trash2 size={16} />
                             </Button>
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             )}
           </div>

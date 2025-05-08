@@ -142,6 +142,14 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
 // Create a new blog post
 export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>): Promise<BlogPost | null> => {
   try {
+    // Get current user to set as author
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.error('User not authenticated');
+      return null;
+    }
+    
     const { data, error } = await supabase
       .from('posts')
       .insert([{
@@ -151,31 +159,34 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
         excerpt: post.excerpt,
         featured_image: post.image_url,
         published_at: new Date().toISOString(),
-        author_id: null // You may want to add author handling later
+        author_id: user.id
       }])
-      .select()
-      .single();
+      .select();
       
     if (error) {
       console.error('Error creating blog post:', error);
       return null;
     }
     
+    if (!data || data.length === 0) {
+      return null;
+    }
+    
     // Return transformed post
     return {
-      id: data.id,
-      title: data.title,
-      excerpt: data.excerpt || '',
-      content: data.content || '',
+      id: data[0].id,
+      title: data[0].title,
+      excerpt: data[0].excerpt || '',
+      content: data[0].content || '',
       author_name: post.author_name,
       author_role: post.author_role,
       author_avatar: post.author_avatar,
-      publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: `${Math.ceil((data.content?.length || 0) / 1000)} min read`,
+      publish_date: data[0].published_at ? new Date(data[0].published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      read_time: `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
       category: post.category,
-      image_url: data.featured_image || '',
+      image_url: data[0].featured_image || '',
       featured: post.featured || false,
-      slug: data.slug
+      slug: data[0].slug
     };
   } catch (error) {
     console.error('Exception creating blog post:', error);
