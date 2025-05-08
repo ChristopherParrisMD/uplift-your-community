@@ -6,6 +6,7 @@ import { API_URL } from "@/constants/therapistSearch";
 interface Therapist {
   id: string;
   name: string;
+  image: string; // Added this to ensure consistency
   specialty: string;
   location: string;
   rating: number;

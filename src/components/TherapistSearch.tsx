@@ -17,6 +17,19 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// Make sure Therapist interface matches the one in SearchResults.tsx
+interface Therapist {
+  id: string;
+  name: string;
+  image: string; // Added the missing image property
+  specialty: string;
+  location: string;
+  rating: number;
+  reviews: number;
+  coordinates: [number, number];
+  [key: string]: any;
+}
+
 const TherapistSearch = () => {
   const {
     searchLocation,
