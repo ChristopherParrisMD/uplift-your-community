@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export interface BlogPostProps {
-  id: number;
+  id: string;
   title: string;
   excerpt: string;
   author: {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost } from "@/services/blogService";
@@ -29,9 +28,9 @@ const BlogAdmin = () => {
     image_url: "",
     slug: ""
   });
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [postToDelete, setPostToDelete] = useState<number | null>(null);
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
   
   const {
     data: blogPosts = [],
