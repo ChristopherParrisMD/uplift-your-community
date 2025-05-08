@@ -154,36 +154,6 @@ const Contact = () => {
             </div>
           </div>
         </section>
-        
-        {/* FAQ Section */}
-        <section className="py-12 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
-            
-            <div className="space-y-6">
-              <FAQ 
-                question="How quickly can I expect a response to my inquiry?" 
-                answer="We strive to respond to all inquiries within 1-2 business days. For urgent matters, please call us directly."
-              />
-              <FAQ 
-                question="Do you offer consulting services for organizations?" 
-                answer="Yes, we provide mental health workshops, training, and consulting services for businesses, schools, and other organizations. Please contact us with details about your needs."
-              />
-              <FAQ 
-                question="Can I request a specific resource or topic to be covered?" 
-                answer="Absolutely! We're always looking to expand our resources based on community needs. Feel free to suggest topics you'd like to see covered."
-              />
-              <FAQ 
-                question="Is my contact information kept confidential?" 
-                answer="Yes, we take privacy very seriously. Your contact information is kept confidential and is only used to respond to your inquiries. See our Privacy Policy for more details."
-              />
-              <FAQ 
-                question="How can I report a technical issue with the website?" 
-                answer="Please use the contact form and select 'Technical Issue' as the subject. Provide details about the problem you encountered, including the device and browser you were using."
-              />
-            </div>
-          </div>
-        </section>
       </main>
       
       <Footer />
@@ -210,13 +180,6 @@ const ContactCard = ({ icon, title, content, description }: {
       </div>
     </CardContent>
   </Card>
-);
-
-const FAQ = ({ question, answer }: { question: string; answer: string }) => (
-  <div className="border-b border-gray-200 pb-6">
-    <h3 className="text-lg font-semibold mb-2">{question}</h3>
-    <p className="text-gray-600">{answer}</p>
-  </div>
 );
 
 export default Contact;
