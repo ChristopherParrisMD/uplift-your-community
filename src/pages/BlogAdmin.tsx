@@ -11,7 +11,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Edit, Trash2, Plus } from "lucide-react";
+import { Edit, Trash2, Plus, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const BlogAdmin = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,6 +33,9 @@ const BlogAdmin = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   
   const {
     data: blogPosts = [],
@@ -135,6 +140,12 @@ const BlogAdmin = () => {
     setIsEditing(false);
   };
   
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/admin-login');
+    toast({ title: "Signed out successfully" });
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
@@ -145,13 +156,27 @@ const BlogAdmin = () => {
             <div>
               <h1 className="text-3xl font-bold">Blog Management</h1>
               <p className="text-gray-600 mt-1">Create and manage your blog posts</p>
+              {user && (
+                <p className="text-sm text-mindful-600 mt-1">
+                  Logged in as: {user.email}
+                </p>
+              )}
             </div>
-            <div className="mt-4 md:mt-0">
+            <div className="mt-4 md:mt-0 flex gap-2">
               <Button 
                 onClick={() => setIsEditing(!isEditing)}
                 className="flex items-center gap-2"
               >
                 {isEditing ? 'Cancel' : <><Plus size={16} /> New Post</>}
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                onClick={handleSignOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut size={16} />
+                Sign Out
               </Button>
             </div>
           </div>

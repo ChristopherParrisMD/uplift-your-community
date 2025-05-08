@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import NavBar from "@/components/NavBar";
@@ -10,6 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getBlogPosts } from "@/services/blogService";
 import { BlogPost, BlogCategory } from "@/types/blog";
 import { toast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Lock, Unlock } from "lucide-react";
 
 const categories = [
   "All",
@@ -23,6 +25,7 @@ const categories = [
 const Blog = () => {
   const [activeCategory, setActiveCategory] = useState<BlogCategory>("All");
   const [visiblePosts, setVisiblePosts] = useState<number>(6);
+  const { user } = useAuth();
   
   // Fetch blog posts using React Query
   const { 
@@ -71,6 +74,15 @@ const Blog = () => {
               <p className="mt-6 text-xl text-gray-600">
                 Research-backed articles, expert insights, and news on the latest developments in mental health care.
               </p>
+              
+              <div className="mt-6">
+                <Link to={user ? "/blog-admin" : "/admin-login"}>
+                  <Button variant="outline" size="sm" className="flex items-center gap-1">
+                    {user ? <Unlock size={14} /> : <Lock size={14} />}
+                    {user ? "Manage Blog" : "Admin Login"}
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
