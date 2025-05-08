@@ -76,47 +76,6 @@ const Resources = () => {
               </div>
             </div>
             
-            {/* Mental Health Tools Section */}
-            <div className="bg-white shadow-sm rounded-lg p-6 md:p-8 mb-8">
-              <h2 className="text-2xl font-bold mb-6">Mental Health Tools</h2>
-              <p className="text-gray-600 mb-8">
-                Practical resources and tools to help support your mental well-being day-to-day.
-              </p>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <ToolCard 
-                  title="Anxiety Management" 
-                  description="Techniques and exercises for managing anxiety symptoms"
-                  icon={<AnxietyIcon />}
-                />
-                <ToolCard 
-                  title="Mindfulness Practices" 
-                  description="Simple mindfulness exercises for daily life"
-                  icon={<MindfulnessIcon />}
-                />
-                <ToolCard 
-                  title="Sleep Improvement" 
-                  description="Resources for better sleep habits and routines"
-                  icon={<SleepIcon />}
-                />
-                <ToolCard 
-                  title="Mood Tracking" 
-                  description="Tools to track and understand mood patterns"
-                  icon={<MoodIcon />}
-                />
-                <ToolCard 
-                  title="Stress Reduction" 
-                  description="Effective strategies to reduce and manage stress"
-                  icon={<StressIcon />}
-                />
-                <ToolCard 
-                  title="Positive Psychology" 
-                  description="Exercises to build resilience and positive thinking"
-                  icon={<PositivityIcon />}
-                />
-              </div>
-            </div>
-            
             {/* Self-Help Books Section */}
             <div className="bg-white shadow-sm rounded-lg p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-6">Recommended Self-Help Books</h2>
@@ -194,18 +153,6 @@ const CrisisResource = ({ name, number, description }: { name: string; number: s
   </div>
 );
 
-const ToolCard = ({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) => (
-  <div className="border rounded-lg p-5 bg-white shadow-sm hover:border-mindful-300 transition-colors flex items-start">
-    <div className="mr-4 mt-1">
-      {icon}
-    </div>
-    <div>
-      <h4 className="font-bold mb-2">{title}</h4>
-      <p className="text-gray-600 text-sm">{description}</p>
-    </div>
-  </div>
-);
-
 const BookCard = ({ title, author, topic }: { title: string; author: string; topic: string }) => (
   <div className="border rounded-lg p-5 bg-white shadow-sm hover:border-mindful-300 transition-colors">
     <div className="bg-mindful-50 text-mindful-700 text-xs font-medium px-2 py-1 rounded-full inline-block mb-3">
@@ -215,43 +162,6 @@ const BookCard = ({ title, author, topic }: { title: string; author: string; top
     <p className="text-gray-500 text-sm mb-3">by {author}</p>
     <Button variant="link" className="text-mindful-700 p-0">Learn More →</Button>
   </div>
-);
-
-// Icons
-const AnxietyIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-const MindfulnessIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-  </svg>
-);
-
-const SleepIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-  </svg>
-);
-
-const MoodIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-const StressIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-const PositivityIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
 );
 
 export default Resources;
