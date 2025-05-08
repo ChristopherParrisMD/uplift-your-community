@@ -18,44 +18,6 @@ const Index = () => {
         {/* Hero Section */}
         <Hero />
         
-        {/* Services Section */}
-        <section className="py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold">How We Can Help</h2>
-              <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-                Our mission is to make mental health care accessible, relatable, and effective for everyone.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <ServiceCard 
-                icon={<TherapistIcon />}
-                title="Find the Right Therapist"
-                description="Search our curated network of licensed mental health professionals who specialize in various areas of expertise."
-                linkText="Find a therapist"
-                linkUrl="/therapist-finder"
-              />
-              
-              <ServiceCard 
-                icon={<ResourceIcon />}
-                title="Evidence-Based Resources"
-                description="Access articles, tools, and guides written by mental health professionals to support your well-being."
-                linkText="Explore resources"
-                linkUrl="/resources"
-              />
-              
-              <ServiceCard 
-                icon={<CommunityIcon />}
-                title="Supportive Community"
-                description="Connect with others in moderated forums and support groups focused on specific mental health topics."
-                linkText="Join our community"
-                linkUrl="/signup"
-              />
-            </div>
-          </div>
-        </section>
-
         {/* Call to Action */}
         <section className="py-16 md:py-24 bg-mindful-600 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
