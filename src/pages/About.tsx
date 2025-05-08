@@ -1,11 +1,8 @@
-
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-
 const About = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <NavBar />
       
       <main className="flex-grow">
@@ -21,11 +18,7 @@ const About = () => {
               </div>
               <div className="md:w-1/2">
                 <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
-                    alt="Team of mental health professionals collaborating" 
-                    className="w-full h-full object-cover"
-                  />
+                  <img alt="Team of mental health professionals collaborating" className="w-full h-full object-cover" src="/lovable-uploads/2093256e-3eac-487b-b829-d32e363ac083.jpg" />
                 </div>
               </div>
             </div>
@@ -38,48 +31,32 @@ const About = () => {
             <h2 className="text-3xl font-bold text-center mb-12">Our Values</h2>
             
             <div className="grid gap-8 md:grid-cols-3">
-              <ValueCard 
-                title="Evidence-Based Approach" 
-                description="We are committed to providing information that is grounded in research and endorsed by mental health professionals."
-              />
-              <ValueCard 
-                title="Accessibility" 
-                description="We strive to make mental health resources available to everyone, regardless of their circumstances or background."
-              />
-              <ValueCard 
-                title="Compassion" 
-                description="We approach every interaction with empathy, understanding that each person's mental health journey is unique."
-              />
-              <ValueCard 
-                title="Empowerment" 
-                description="We believe in giving people the tools and knowledge they need to take an active role in their mental wellness."
-              />
-              <ValueCard 
-                title="Inclusivity" 
-                description="We recognize the diverse needs of different communities and work to create resources that are relevant and respectful to all."
-              />
-              <ValueCard 
-                title="Integrity" 
-                description="We maintain the highest standards of honesty, transparency, and ethical practice in everything we do."
-              />
+              <ValueCard title="Evidence-Based Approach" description="We are committed to providing information that is grounded in research and endorsed by mental health professionals." />
+              <ValueCard title="Accessibility" description="We strive to make mental health resources available to everyone, regardless of their circumstances or background." />
+              <ValueCard title="Compassion" description="We approach every interaction with empathy, understanding that each person's mental health journey is unique." />
+              <ValueCard title="Empowerment" description="We believe in giving people the tools and knowledge they need to take an active role in their mental wellness." />
+              <ValueCard title="Inclusivity" description="We recognize the diverse needs of different communities and work to create resources that are relevant and respectful to all." />
+              <ValueCard title="Integrity" description="We maintain the highest standards of honesty, transparency, and ethical practice in everything we do." />
             </div>
           </div>
         </section>
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
 
 // Helper Components
-const ValueCard = ({ title, description }: { title: string; description: string }) => (
-  <Card>
+const ValueCard = ({
+  title,
+  description
+}: {
+  title: string;
+  description: string;
+}) => <Card>
     <CardContent className="pt-6">
       <h3 className="text-xl font-semibold mb-3">{title}</h3>
       <p className="text-gray-600">{description}</p>
     </CardContent>
-  </Card>
-);
-
+  </Card>;
 export default About;
