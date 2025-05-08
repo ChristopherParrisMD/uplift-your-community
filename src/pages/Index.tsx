@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -55,77 +56,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-16 bg-gradient-to-br from-mindful-50 to-calm-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-bold">Find the Mental Health Support You Need</h2>
-                <p className="mt-4 text-lg text-gray-600">
-                  Our therapist finder makes it easy to connect with qualified professionals who match your specific needs.
-                </p>
-                
-                <ul className="mt-8 space-y-4">
-                  <FeatureItem text="Search by specialization, insurance, or treatment approach" />
-                  <FeatureItem text="Read verified reviews from real clients" />
-                  <FeatureItem text="Filter by those accepting new patients" />
-                  <FeatureItem text="See available appointment times" />
-                </ul>
-                
-                <Button 
-                  asChild 
-                  className="mt-8 bg-mindful-600 hover:bg-mindful-700 rounded-full px-8"
-                  size="lg"
-                >
-                  <Link to="/therapist-finder">
-                    Find a Therapist
-                  </Link>
-                </Button>
-              </div>
-              
-              <div className="relative">
-                <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-                  <h3 className="text-xl font-bold mb-4">Featured Therapists</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="bg-gray-100 p-4 rounded-lg">
-                      <div className="flex items-center">
-                        <img 
-                          src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" 
-                          alt="Therapist" 
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div className="ml-4">
-                          <p className="font-medium">Dr. Michael Chen</p>
-                          <p className="text-sm text-gray-500">Trauma Specialist • 2.5 miles away</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gray-100 p-4 rounded-lg">
-                      <div className="flex items-center">
-                        <img 
-                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" 
-                          alt="Therapist" 
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div className="ml-4">
-                          <p className="font-medium">Dr. Emily Rodriguez</p>
-                          <p className="text-sm text-gray-500">Relationship Counselor • 3.8 miles away</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="absolute -bottom-5 -right-5 bg-mindful-600 rounded-full p-6 shadow-lg hidden md:block">
-                  <HeartIcon />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
         {/* Call to Action */}
         <section className="py-16 md:py-24 bg-mindful-600 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
