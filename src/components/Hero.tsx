@@ -1,11 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
     <div className="hero-pattern relative overflow-hidden bg-gradient-to-br from-mindful-50 to-calm-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="py-20 md:py-28 flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 md:pr-8 mb-10 md:mb-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
@@ -14,14 +13,14 @@ const Hero = () => {
             <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl">
               Connect with trusted therapists, explore helpful resources, and join a community that understands your mental health journey.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Button asChild size="lg" className="bg-mindful-600 hover:bg-mindful-700 rounded-full px-8">
+            <div className="mt-10 flex flex-wrap gap-4 relative z-20">
+              <Button asChild size="lg" className="bg-mindful-600 hover:bg-mindful-700 rounded-full px-8" aria-label="Find a therapist">
                 <Link to="/therapist-finder">Find a Therapist</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-mindful-600 text-mindful-600 hover:bg-mindful-50">
+              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-mindful-600 text-mindful-600 hover:bg-mindful-50" aria-label="Explore mental health resources">
                 <Link to="/resources">Explore Resources</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-calm-600 text-calm-600 hover:bg-calm-50">
+              <Button asChild size="lg" variant="outline" className="rounded-full px-8 border-calm-600 text-calm-600 hover:bg-calm-50" aria-label="Join our mental health community">
                 <Link to="/signup">Join Our Community</Link>
               </Button>
             </div>
@@ -43,9 +42,9 @@ const Hero = () => {
         </div>
       </div>
       
-      {/* Curved shape divider - making sure it doesn't block interaction */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      {/* Curved shape divider */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
           <path 
             fill="#ffffff" 
             fillOpacity="1" 
