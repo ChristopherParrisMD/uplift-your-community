@@ -86,52 +86,6 @@ const About = () => {
           </div>
         </section>
         
-        {/* Our Team Section */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">Our Team</h2>
-            
-            <div className="grid gap-8 md:grid-cols-3">
-              <TeamMember 
-                name="Dr. Sarah Johnson" 
-                title="Founder & Clinical Director"
-                bio="Dr. Johnson is a licensed clinical psychologist with over 15 years of experience in mental health treatment and advocacy."
-                image="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
-              />
-              <TeamMember 
-                name="Michael Chen" 
-                title="Chief Technology Officer"
-                bio="Michael brings 10 years of experience in creating accessible digital platforms focused on healthcare and education."
-                image="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
-              />
-              <TeamMember 
-                name="Dr. Aisha Patel" 
-                title="Content Director"
-                bio="A psychiatrist specializing in cultural competence in mental health care and mental health education."
-                image="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
-              />
-              <TeamMember 
-                name="James Wilson" 
-                title="Community Engagement Manager"
-                bio="A mental health advocate with lived experience who focuses on creating supportive and inclusive communities."
-                image="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
-              />
-              <TeamMember 
-                name="Maria Rodriguez" 
-                title="Educational Program Director"
-                bio="A licensed therapist with a background in developing mental health curricula for diverse audiences."
-                image="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
-              />
-              <TeamMember 
-                name="Dr. David Kim" 
-                title="Research Coordinator"
-                bio="A research psychologist who ensures all our content is up-to-date with the latest scientific findings."
-                image="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
-              />
-            </div>
-          </div>
-        </section>
-        
         {/* Our Partners Section */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -168,17 +122,6 @@ const ValueCard = ({ title, description }: { title: string; description: string 
       <p className="text-gray-600">{description}</p>
     </CardContent>
   </Card>
-);
-
-const TeamMember = ({ name, title, bio, image }: { name: string; title: string; bio: string; image: string }) => (
-  <div className="text-center">
-    <div className="mb-4 mx-auto rounded-full overflow-hidden w-32 h-32">
-      <img src={image} alt={name} className="w-full h-full object-cover" />
-    </div>
-    <h3 className="font-bold text-lg">{name}</h3>
-    <p className="text-mindful-600 font-medium mb-2">{title}</p>
-    <p className="text-gray-600 text-sm">{bio}</p>
-  </div>
 );
 
 export default About;
