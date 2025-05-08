@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ const Signup = () => {
     });
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
@@ -38,18 +39,55 @@ const Signup = () => {
       return;
     }
     
-    // Simulate successful newsletter signup
-    setTimeout(() => {
+    try {
+      // Save subscription to Supabase
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert([
+          { name: formData.name, email: formData.email }
+        ]);
+        
+      if (error) {
+        // Handle duplicate email error
+        if (error.code === '23505') {
+          toast({
+            title: "Already subscribed",
+            description: "This email address is already subscribed to our newsletter.",
+            variant: "destructive",
+          });
+        } else {
+          console.error("Error saving subscription:", error);
+          toast({
+            title: "Subscription failed",
+            description: "There was an issue subscribing you to our newsletter. Please try again.",
+            variant: "destructive",
+          });
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // Success
       toast({
         title: "Subscription successful!",
         description: "Thank you for subscribing to our newsletter. You'll receive monthly mental health resources, tips, and insights directly in your inbox.",
       });
-      setIsLoading(false);
+      
+      // Reset form
       setFormData({
         name: "",
         email: "",
       });
-    }, 1500);
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Subscription failed",
+        description: "There was an issue subscribing you to our newsletter. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
