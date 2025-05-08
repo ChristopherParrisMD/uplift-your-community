@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -8,7 +7,7 @@ const Footer = () => {
         <div className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="inline-block">
-              <span className="text-xl font-display font-bold bg-gradient-to-r from-mindful-600 to-calm-600 inline-block text-transparent bg-clip-text">MindfulConnect</span>
+              <span className="text-xl font-display font-bold bg-gradient-to-r from-mindful-600 to-calm-600 inline-block text-transparent bg-clip-text">My Insight Ally</span>
             </Link>
             <p className="mt-4 text-gray-600 max-w-md">
               Empowering mental wellness through community connection, professional support, and evidence-based resources.
@@ -59,7 +58,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-200 py-8">
           <p className="text-sm text-gray-500 text-center">
-            © {new Date().getFullYear()} MindfulConnect. All rights reserved.
+            © {new Date().getFullYear()} My Insight Ally. All rights reserved.
           </p>
           <p className="text-xs text-gray-400 text-center mt-2">
             If you're experiencing a crisis, please call the 988 Suicide & Crisis Lifeline at 988, or text HOME to 741741.
