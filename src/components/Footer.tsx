@@ -19,7 +19,6 @@ const Footer = () => {
             <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">Resources</h3>
             <ul className="mt-4 space-y-3">
               <FooterLink to="/blog">Blog</FooterLink>
-              <FooterLink to="/resources">Mental Health Resources</FooterLink>
               <FooterLink to="/crisis">Crisis Support</FooterLink>
             </ul>
           </div>
