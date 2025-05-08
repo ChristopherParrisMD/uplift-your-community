@@ -26,54 +26,11 @@ const Resources = () => {
         {/* Resources Tabs Section */}
         <section className="py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Tabs defaultValue="self-help" className="space-y-8">
-              <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-2 md:grid-cols-3 gap-2">
-                <TabsTrigger value="self-help">Self-Help Tools</TabsTrigger>
+            <Tabs defaultValue="crisis" className="space-y-8">
+              <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-2 gap-2">
                 <TabsTrigger value="crisis">Crisis Resources</TabsTrigger>
                 <TabsTrigger value="education">Education</TabsTrigger>
               </TabsList>
-              
-              <TabsContent value="self-help" className="space-y-8">
-                <div className="bg-white shadow-sm rounded-lg p-6 md:p-8">
-                  <h2 className="text-2xl font-bold mb-6">Self-Help Tools</h2>
-                  <p className="text-gray-600 mb-8">
-                    These evidence-based resources can help you develop skills to manage your mental health. While they're not substitutes for professional care, they can be valuable additions to your wellness toolkit.
-                  </p>
-                  
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <ResourceCard
-                      title="Anxiety Management Techniques"
-                      description="Learn practical skills to manage anxiety symptoms, including breathing exercises, progressive muscle relaxation, and cognitive reframing."
-                      icon={<AnxietyIcon />}
-                    />
-                    <ResourceCard
-                      title="Mindfulness Practice Guide"
-                      description="A beginner-friendly introduction to mindfulness meditation with guided audio practices ranging from 5-30 minutes."
-                      icon={<MindfulnessIcon />}
-                    />
-                    <ResourceCard
-                      title="Sleep Improvement Workbook"
-                      description="Develop better sleep habits with this interactive workbook based on cognitive behavioral therapy for insomnia (CBT-I)."
-                      icon={<SleepIcon />}
-                    />
-                    <ResourceCard
-                      title="Mood Tracking Journal"
-                      description="A digital journal to track your mood patterns, identify triggers, and develop coping strategies for emotional regulation."
-                      icon={<MoodIcon />}
-                    />
-                    <ResourceCard
-                      title="Stress Management Guide"
-                      description="Practical techniques for managing stress in daily life, including time management, boundary setting, and self-care practices."
-                      icon={<StressIcon />}
-                    />
-                    <ResourceCard
-                      title="Positive Psychology Exercises"
-                      description="Science-based exercises to build resilience, increase positive emotions, and enhance your overall well-being."
-                      icon={<PositivityIcon />}
-                    />
-                  </div>
-                </div>
-              </TabsContent>
               
               <TabsContent value="crisis" className="space-y-8">
                 <div className="bg-white shadow-sm rounded-lg p-6 md:p-8">
@@ -211,19 +168,6 @@ const Resources = () => {
 };
 
 // Helper Components
-const ResourceCard = ({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) => (
-  <Card className="card-hover h-full">
-    <CardContent className="p-6 flex flex-col h-full">
-      <div className="bg-mindful-50 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-        {icon}
-      </div>
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm mb-4 flex-grow">{description}</p>
-      <Button variant="outline" size="sm" className="w-full">View Resource</Button>
-    </CardContent>
-  </Card>
-);
-
 const CrisisResource = ({ name, number, description }: { name: string; number: string; description: string }) => (
   <div className="border rounded-lg p-5 bg-white shadow-sm hover:border-mindful-300 transition-colors">
     <div className="flex justify-between items-start">

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, MapPin, Search, User, Star, Clock, DollarSign, Map } from "lucide-react";
+import { Check, MapPin, Search, User, Star, Clock, DollarSign, Map, Phone, Mail } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -17,95 +17,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Mock location suggestions
-const locationSuggestions = [
-  "San Francisco, CA",
-  "Oakland, CA",
-  "Berkeley, CA",
-  "Palo Alto, CA",
-  "San Jose, CA",
-  "San Mateo, CA",
-  "Redwood City, CA",
-  "Mountain View, CA"
-];
+// Remove the mock data constants since we'll get them from the API
+const API_URL = 'http://localhost:3001/api';
 
-// Mock therapist data with coordinates
-const mockTherapists = [
-  {
-    id: 1,
-    name: "Dr. Sarah Johnson",
-    specialty: "Anxiety & Depression",
-    location: "San Francisco, CA",
-    distance: "1.2 miles",
-    availability: "Available this week",
-    rating: 4.9,
-    reviews: 127,
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    insurance: ["Blue Cross", "Aetna", "Kaiser"],
-    approaches: ["CBT", "Mindfulness", "Psychodynamic"],
-    acceptingNew: true,
-    price: 150,
-    languages: ["English", "Spanish"],
-    nextAvailable: "2024-03-20",
-    coordinates: [37.7749, -122.4194]
-  },
-  {
-    id: 2,
-    name: "Dr. Michael Chen",
-    specialty: "Trauma & PTSD",
-    location: "Oakland, CA",
-    distance: "3.5 miles",
-    availability: "Available next week",
-    rating: 4.8,
-    reviews: 94,
-    image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    insurance: ["Medicare", "Blue Shield", "United"],
-    approaches: ["EMDR", "Somatic Experiencing"],
-    acceptingNew: true,
-    price: 175,
-    languages: ["English", "Mandarin"],
-    nextAvailable: "2024-03-25",
-    coordinates: [37.8044, -122.2712]
-  },
-  {
-    id: 3,
-    name: "Dr. Emily Rodriguez",
-    specialty: "Relationship Issues",
-    location: "Berkeley, CA",
-    distance: "5.8 miles",
-    availability: "Available in 2 weeks",
-    rating: 4.7,
-    reviews: 86,
-    image: "https://images.unsplash.com/photo-1574022648428-2932d9272841?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    insurance: ["Cigna", "Aetna", "Magellan"],
-    approaches: ["Humanistic", "Family Systems"],
-    acceptingNew: true,
-    price: 160,
-    languages: ["English", "Spanish"],
-    nextAvailable: "2024-03-28",
-    coordinates: [37.8715, -122.2730]
-  },
-  {
-    id: 4,
-    name: "Dr. James Wilson",
-    specialty: "Addiction & Recovery",
-    location: "Palo Alto, CA",
-    distance: "12.4 miles",
-    availability: "Available this week",
-    rating: 4.6,
-    reviews: 73,
-    image: "https://images.unsplash.com/photo-1557231146-afde25e6598f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    insurance: ["Anthem", "Blue Shield", "Cigna"],
-    approaches: ["Motivational Interviewing", "CBT", "12-Step"],
-    acceptingNew: false,
-    price: 200,
-    languages: ["English"],
-    nextAvailable: "2024-04-01",
-    coordinates: [37.4419, -122.1430]
-  }
-];
-
-// Available specialties and insurance options
 const specialties = [
   "Anxiety & Depression",
   "Trauma & PTSD",
@@ -144,7 +58,7 @@ const TherapistSearch = () => {
   const [specialty, setSpecialty] = useState("");
   const [insurance, setInsurance] = useState("");
   const [sortBy, setSortBy] = useState("distance");
-  const [therapists, setTherapists] = useState(mockTherapists);
+  const [therapists, setTherapists] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -165,69 +79,68 @@ const TherapistSearch = () => {
     }
   }, []);
 
-  // Handle location input changes
-  const handleLocationChange = (value: string) => {
-    setSearchLocation(value);
-    if (value.length > 2) {
-      const filtered = locationSuggestions.filter(loc => 
-        loc.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filtered);
-    } else {
-      setSuggestions([]);
+  const handleSearch = async () => {
+    if (!searchLocation.trim()) {
+      setError("Please enter a location to search");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setTherapists([]); // Clear existing results
+
+    try {
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (searchLocation.trim()) params.append('location', searchLocation.trim());
+      if (specialty) params.append('specialty', specialty);
+      if (insurance) params.append('insurance', insurance);
+      if (sortBy) params.append('sortBy', sortBy);
+
+      console.log('Searching with params:', params.toString());
+      const response = await fetch(`${API_URL}/therapists?${params.toString()}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch therapists');
+      }
+      
+      const data = await response.json();
+      console.log('Search results:', data);
+      
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format from server');
+      }
+      
+      if (data.length === 0) {
+        setError("No therapists found matching your criteria. Try adjusting your search parameters.");
+      } else {
+        setTherapists(data);
+        setShowMap(true);
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+      setError(err.message || "An error occurred while searching. Please try again.");
+      setTherapists([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSearch = () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      let filtered = [...mockTherapists];
-      
-      if (searchLocation) {
-        filtered = filtered.filter(t => 
-          t.location.toLowerCase().includes(searchLocation.toLowerCase())
-        );
+  // Handle location input changes
+  const handleLocationChange = async (value: string) => {
+    setSearchLocation(value);
+    if (value.length > 2) {
+      try {
+        const response = await fetch(`${API_URL}/locations?query=${encodeURIComponent(value)}`);
+        const data = await response.json();
+        setSuggestions(data);
+      } catch (err) {
+        console.error('Error fetching location suggestions:', err);
+        setSuggestions([]);
       }
-      
-      if (specialty) {
-        filtered = filtered.filter(t => 
-          t.specialty.toLowerCase() === specialty.toLowerCase()
-        );
-      }
-      
-      if (insurance) {
-        filtered = filtered.filter(t => 
-          t.insurance.some(i => i.toLowerCase() === insurance.toLowerCase())
-        );
-      }
-
-      // Sort results
-      filtered.sort((a, b) => {
-        switch (sortBy) {
-          case "distance":
-            return parseFloat(a.distance) - parseFloat(b.distance);
-          case "rating":
-            return b.rating - a.rating;
-          case "price_low":
-            return a.price - b.price;
-          case "price_high":
-            return b.price - a.price;
-          case "availability":
-            return new Date(a.nextAvailable).getTime() - new Date(b.nextAvailable).getTime();
-          default:
-            return 0;
-        }
-      });
-      
-      setTherapists(filtered);
-      setShowMap(true);
-    } catch (err) {
-      setError("An error occurred while searching. Please try again.");
-      console.error("Search error:", err);
-    } finally {
-      setLoading(false);
+    } else {
+      setSuggestions([]);
     }
   };
 
@@ -264,6 +177,7 @@ const TherapistSearch = () => {
                       onClick={() => {
                         setSearchLocation(suggestion);
                         setSuggestions([]);
+                        handleSearch(); // Search when suggestion is selected
                       }}
                     >
                       {suggestion}
@@ -445,73 +359,7 @@ const TherapistSearch = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {therapists.map((therapist) => (
-              <Card key={therapist.id} className="card-hover overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="flex flex-col sm:flex-row">
-                    <div className="sm:w-1/3">
-                      <img 
-                        src={therapist.image} 
-                        alt={therapist.name} 
-                        className="w-full h-full object-cover aspect-square"
-                      />
-                    </div>
-                    <div className="p-4 sm:p-6 sm:w-2/3">
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-bold text-lg">{therapist.name}</h4>
-                        <div className="flex items-center bg-mindful-50 px-2 py-1 rounded-full text-xs text-mindful-800">
-                          <Star className="h-3 w-3 mr-1" />
-                          <span className="font-medium">{therapist.rating}</span>
-                          <span className="ml-1 text-gray-500">({therapist.reviews})</span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-600 mt-1">{therapist.specialty}</p>
-                      
-                      <div className="flex items-center mt-3 text-sm text-gray-500">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <span>{therapist.location} • {therapist.distance}</span>
-                      </div>
-
-                      <div className="flex items-center mt-2 text-sm text-gray-500">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span>Next available: {new Date(therapist.nextAvailable).toLocaleDateString()}</span>
-                      </div>
-
-                      <div className="flex items-center mt-2 text-sm text-gray-500">
-                        <DollarSign className="h-4 w-4 mr-1" />
-                        <span>${therapist.price}/session</span>
-                      </div>
-                      
-                      <div className="mt-3 flex flex-wrap gap-1">
-                        {therapist.insurance.slice(0, 2).map((ins, idx) => (
-                          <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
-                            {ins}
-                          </span>
-                        ))}
-                        {therapist.insurance.length > 2 && (
-                          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
-                            +{therapist.insurance.length - 2}
-                          </span>
-                        )}
-                      </div>
-                      
-                      <div className="mt-4 flex justify-between items-center">
-                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${therapist.acceptingNew ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
-                          {therapist.acceptingNew ? (
-                            <span className="flex items-center">
-                              <Check className="h-3 w-3 mr-1" /> 
-                              Accepting new patients
-                            </span>
-                          ) : 'Limited availability'}
-                        </span>
-                        <Button size="sm" variant="outline">
-                          View Profile
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <TherapistCard key={therapist.id} therapist={therapist} />
             ))}
           </div>
         )}
@@ -519,5 +367,85 @@ const TherapistSearch = () => {
     </div>
   );
 };
+
+// Update the therapist card to show NPI information
+const TherapistCard = ({ therapist }) => (
+  <Card key={therapist.id} className="card-hover overflow-hidden">
+    <CardContent className="p-0">
+      <div className="flex flex-col sm:flex-row">
+        <div className="sm:w-1/3">
+          <img 
+            src={therapist.image} 
+            alt={therapist.name} 
+            className="w-full h-full object-cover aspect-square"
+          />
+        </div>
+        <div className="p-4 sm:p-6 sm:w-2/3">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-bold text-lg">{therapist.name}</h4>
+              {therapist.credentials && (
+                <span className="text-sm text-gray-600">{therapist.credentials}</span>
+              )}
+            </div>
+            <div className="flex items-center bg-mindful-50 px-2 py-1 rounded-full text-xs text-mindful-800">
+              <Star className="h-3 w-3 mr-1" />
+              <span className="font-medium">{therapist.rating}</span>
+              <span className="ml-1 text-gray-500">({therapist.reviews})</span>
+            </div>
+          </div>
+          
+          <p className="text-gray-600 mt-1">{therapist.specialty}</p>
+          
+          <div className="flex items-center mt-3 text-sm text-gray-500">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span>{therapist.location}</span>
+          </div>
+
+          {therapist.practiceAddress && (
+            <div className="mt-2 text-sm text-gray-500">
+              <p>{therapist.practiceAddress.street}</p>
+              <p>{therapist.practiceAddress.city}, {therapist.practiceAddress.state} {therapist.practiceAddress.zip}</p>
+            </div>
+          )}
+
+          {therapist.phone && (
+            <div className="flex items-center mt-2 text-sm text-gray-500">
+              <Phone className="h-4 w-4 mr-1" />
+              <span>{therapist.phone}</span>
+            </div>
+          )}
+
+          {therapist.email && (
+            <div className="flex items-center mt-2 text-sm text-gray-500">
+              <Mail className="h-4 w-4 mr-1" />
+              <span>{therapist.email}</span>
+            </div>
+          )}
+
+          <div className="mt-3 flex flex-wrap gap-1">
+            {therapist.languages.map((lang, idx) => (
+              <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                {lang}
+              </span>
+            ))}
+          </div>
+          
+          <div className="mt-4 flex justify-between items-center">
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">NPI: {therapist.npi}</span>
+              {therapist.gender && (
+                <span className="text-xs text-gray-500">Gender: {therapist.gender}</span>
+              )}
+            </div>
+            <Button size="sm" variant="outline">
+              View Profile
+            </Button>
+          </div>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 export default TherapistSearch;
