@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Check, MapPin, Search, User, Star, Clock, DollarSign, Map, Phone, Mail 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { toast } from "@/components/ui/use-toast";
 
 // Fix for default marker icons in Leaflet with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -82,6 +84,11 @@ const TherapistSearch = () => {
   const handleSearch = async () => {
     if (!searchLocation.trim()) {
       setError("Please enter a location to search");
+      toast({
+        title: "Location Required",
+        description: "Please enter a location to search",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -114,13 +121,27 @@ const TherapistSearch = () => {
       
       if (data.length === 0) {
         setError("No therapists found matching your criteria. Try adjusting your search parameters.");
+        toast({
+          title: "No Results",
+          description: "No therapists found matching your criteria. Try adjusting your search parameters.",
+          variant: "destructive"
+        });
       } else {
         setTherapists(data);
         setShowMap(true);
+        toast({
+          title: "Search Complete",
+          description: `Found ${data.length} therapists matching your criteria.`
+        });
       }
     } catch (err) {
       console.error("Search error:", err);
       setError(err.message || "An error occurred while searching. Please try again.");
+      toast({
+        title: "Search Error",
+        description: err.message || "An error occurred while searching. Please try again.",
+        variant: "destructive"
+      });
       setTherapists([]);
     } finally {
       setLoading(false);
@@ -368,7 +389,7 @@ const TherapistSearch = () => {
   );
 };
 
-// Update the therapist card to show NPI information
+// Update the therapist card to remove the NPI information which isn't in the data
 const TherapistCard = ({ therapist }) => (
   <Card key={therapist.id} className="card-hover overflow-hidden">
     <CardContent className="p-0">
@@ -424,7 +445,7 @@ const TherapistCard = ({ therapist }) => (
           )}
 
           <div className="mt-3 flex flex-wrap gap-1">
-            {therapist.languages.map((lang, idx) => (
+            {therapist.languages?.map((lang, idx) => (
               <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
                 {lang}
               </span>
@@ -433,7 +454,6 @@ const TherapistCard = ({ therapist }) => (
           
           <div className="mt-4 flex justify-between items-center">
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500">NPI: {therapist.npi}</span>
               {therapist.gender && (
                 <span className="text-xs text-gray-500">Gender: {therapist.gender}</span>
               )}

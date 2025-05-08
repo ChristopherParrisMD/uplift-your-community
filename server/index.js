@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 
@@ -114,6 +115,7 @@ app.get('/api/therapists', async (req, res) => {
       });
     }
 
+    console.log(`Found ${filteredTherapists.length} therapists matching criteria`);
     res.json(filteredTherapists);
   } catch (error) {
     console.error('Error in /api/therapists:', error);
@@ -139,12 +141,17 @@ app.get('/api/locations', (req, res) => {
     const filtered = locations.filter(loc => 
       loc.toLowerCase().includes(query.toLowerCase())
     );
+    console.log(`Location search for "${query}" returned ${filtered.length} results`);
     res.json(filtered);
   } else {
+    console.log('Returning all locations');
     res.json(locations);
   }
 });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
-}); 
+  console.log(`Available endpoints:`);
+  console.log(`- GET /api/therapists - Search therapists`);
+  console.log(`- GET /api/locations - Get location suggestions`);
+});
