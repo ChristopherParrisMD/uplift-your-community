@@ -1,6 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import OptimizedImage from "./OptimizedImage";
+
 const Hero = () => {
   return <div className="hero-pattern relative overflow-hidden bg-gradient-to-br from-mindful-50 to-calm-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -26,7 +28,13 @@ const Hero = () => {
           </div>
           <div className="md:w-1/2 relative">
             <div className="relative w-full h-64 md:h-96 animate-float">
-              <img alt="Group of people discussing mental health and wellness" className="w-full h-full object-cover rounded-2xl shadow-xl" loading="eager" src="/lovable-uploads/a2402e42-aa50-4aee-8f6b-3dc24512ed6c.jpg" />
+              <OptimizedImage
+                src="/lovable-uploads/a2402e42-aa50-4aee-8f6b-3dc24512ed6c.jpg"
+                alt="Group of people discussing mental health and wellness"
+                className="w-full h-full object-cover rounded-2xl shadow-xl"
+                width={600}
+                height={400}
+              />
               <div className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 bg-white rounded-2xl p-4 shadow-lg w-40 md:w-64 z-10">
                 <div className="text-xs md:text-sm text-gray-500">Your wellness matters</div>
                 <div className="font-semibold text-sm md:text-base mt-1">83% of people report feeling better after therapy</div>
