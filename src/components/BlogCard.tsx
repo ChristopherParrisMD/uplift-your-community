@@ -18,6 +18,7 @@ export interface BlogPostProps {
   category: string;
   image: string;
   featured?: boolean;
+  slug: string;
 }
 
 interface BlogCardProps {
@@ -43,7 +44,7 @@ const BlogCard = ({ post, className, variant = "default" }: BlogCardProps) => {
           "relative",
           isFeatured ? "md:w-1/2" : ""
         )}>
-          <Link to={`/blog/${post.id}`}>
+          <Link to={`/blog/${post.slug}`}>
             <img 
               src={post.image.replace(/\?.*$/, "") + "?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} 
               alt={post.title} 
@@ -77,7 +78,7 @@ const BlogCard = ({ post, className, variant = "default" }: BlogCardProps) => {
               <span className="text-gray-500">{post.readTime}</span>
             </div>
           
-            <Link to={`/blog/${post.id}`} className="group">
+            <Link to={`/blog/${post.slug}`} className="group">
               <h3 className={cn(
                 "font-bold group-hover:text-mindful-600 transition-colors",
                 isFeatured ? "text-2xl mb-3" : "text-xl mb-2"

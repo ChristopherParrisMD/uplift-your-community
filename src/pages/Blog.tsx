@@ -124,7 +124,8 @@ const Blog = () => {
                       readTime: post.read_time,
                       category: post.category,
                       image: post.image_url,
-                      featured: post.featured
+                      featured: post.featured,
+                      slug: post.slug
                     }} />
                   ))}
                 </div>

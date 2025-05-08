@@ -107,8 +107,6 @@ const BlogPost = () => {
                 </span>
               </div>
             </article>
-            
-            {/* Related articles section could go here */}
           </>
         ) : null}
       </main>

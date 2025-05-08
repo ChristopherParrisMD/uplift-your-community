@@ -1,8 +1,7 @@
-
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
 
-// Default mock data for when Supabase is not configured
+// Default mock data for fallback
 const mockBlogPosts: BlogPost[] = [
   {
     id: 1,
@@ -51,42 +50,48 @@ const mockBlogPosts: BlogPost[] = [
   }
 ];
 
-// Try to get Supabase credentials from environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-// Check if Supabase is configured
-const isSupabaseConfigured = supabaseUrl && supabaseAnonKey;
-
-// Create Supabase client if credentials are available
-let supabase: any = null;
-
-if (isSupabaseConfigured) {
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-  console.log('Supabase client initialized successfully');
-} else {
-  console.warn('Supabase credentials not found. Using mock data instead.');
-}
-
 // Get all blog posts
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
-  if (!isSupabaseConfigured) {
-    console.log('Using mock blog posts data');
-    return Promise.resolve(mockBlogPosts);
-  }
-  
   try {
     const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('publish_date', { ascending: false });
+      .from('posts')
+      .select(`
+        id,
+        title,
+        slug,
+        content,
+        excerpt,
+        featured_image,
+        published_at,
+        author_name:author_id,
+        author_role:author_id,
+        author_avatar:author_id
+      `)
+      .order('published_at', { ascending: false });
       
     if (error) {
       console.error('Error fetching blog posts:', error);
       return mockBlogPosts; // Fallback to mock data on error
     }
     
-    return data as BlogPost[];
+    // Transform the data to match our BlogPost type
+    const posts = data.map(post => ({
+      id: post.id,
+      title: post.title,
+      excerpt: post.excerpt || '',
+      content: post.content || '',
+      author_name: post.author_name || 'Anonymous',
+      author_role: post.author_role || 'Author',
+      author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      publish_date: post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      read_time: `${Math.ceil(post.content?.length / 1000)} min read`,
+      category: 'Research', // Default category - we'll update this in the future
+      image_url: post.featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      featured: false,
+      slug: post.slug
+    }));
+    
+    return posts.length > 0 ? posts : mockBlogPosts;
   } catch (error) {
     console.error('Exception fetching blog posts:', error);
     return mockBlogPosts; // Fallback to mock data on exception
@@ -95,14 +100,9 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
 
 // Get a single blog post by slug
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
-  if (!isSupabaseConfigured) {
-    const post = mockBlogPosts.find(post => post.slug === slug);
-    return Promise.resolve(post || null);
-  }
-  
   try {
     const { data, error } = await supabase
-      .from('blog_posts')
+      .from('posts')
       .select('*')
       .eq('slug', slug)
       .single();
@@ -114,7 +114,24 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       return mockPost || null;
     }
     
-    return data as BlogPost;
+    // Transform to match our BlogPost type
+    const post = {
+      id: data.id,
+      title: data.title,
+      excerpt: data.excerpt || '',
+      content: data.content || '',
+      author_name: data.author_name || 'Anonymous',
+      author_role: data.author_role || 'Author',
+      author_avatar: data.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      read_time: `${Math.ceil(data.content?.length / 1000)} min read`,
+      category: 'Research', // Default category
+      image_url: data.featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      featured: false,
+      slug: data.slug
+    };
+    
+    return post;
   } catch (error) {
     console.error('Exception fetching blog post:', error);
     // Try to find in mock data as fallback
@@ -125,15 +142,18 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
 
 // Create a new blog post
 export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>): Promise<BlogPost | null> => {
-  if (!isSupabaseConfigured) {
-    console.warn('Cannot create blog post: Supabase not configured');
-    return null;
-  }
-  
   try {
     const { data, error } = await supabase
-      .from('blog_posts')
-      .insert([post])
+      .from('posts')
+      .insert([{
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+        excerpt: post.excerpt,
+        featured_image: post.image_url,
+        published_at: new Date().toISOString(),
+        author_id: null // You may want to add author handling later
+      }])
       .select()
       .single();
       
@@ -142,7 +162,22 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
       return null;
     }
     
-    return data as BlogPost;
+    // Return transformed post
+    return {
+      id: data.id,
+      title: data.title,
+      excerpt: data.excerpt || '',
+      content: data.content || '',
+      author_name: post.author_name,
+      author_role: post.author_role,
+      author_avatar: post.author_avatar,
+      publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      read_time: `${Math.ceil(data.content?.length / 1000)} min read`,
+      category: post.category,
+      image_url: data.featured_image || '',
+      featured: post.featured || false,
+      slug: data.slug
+    };
   } catch (error) {
     console.error('Exception creating blog post:', error);
     return null;
@@ -151,15 +186,18 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
 
 // Update an existing blog post
 export const updateBlogPost = async (id: number, post: Partial<BlogPost>): Promise<BlogPost | null> => {
-  if (!isSupabaseConfigured) {
-    console.warn('Cannot update blog post: Supabase not configured');
-    return null;
-  }
-  
   try {
+    const updateData: any = {};
+    
+    if (post.title) updateData.title = post.title;
+    if (post.slug) updateData.slug = post.slug;
+    if (post.content) updateData.content = post.content;
+    if (post.excerpt) updateData.excerpt = post.excerpt;
+    if (post.image_url) updateData.featured_image = post.image_url;
+    
     const { data, error } = await supabase
-      .from('blog_posts')
-      .update(post)
+      .from('posts')
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
@@ -169,7 +207,22 @@ export const updateBlogPost = async (id: number, post: Partial<BlogPost>): Promi
       return null;
     }
     
-    return data as BlogPost;
+    // Return transformed post
+    return {
+      id: data.id,
+      title: data.title,
+      excerpt: data.excerpt || '',
+      content: data.content || '',
+      author_name: post.author_name || 'Anonymous',
+      author_role: post.author_role || 'Author',
+      author_avatar: post.author_avatar || '',
+      publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      read_time: `${Math.ceil(data.content?.length / 1000)} min read`,
+      category: post.category || 'Research',
+      image_url: data.featured_image || '',
+      featured: post.featured || false,
+      slug: data.slug
+    };
   } catch (error) {
     console.error('Exception updating blog post:', error);
     return null;
@@ -178,14 +231,9 @@ export const updateBlogPost = async (id: number, post: Partial<BlogPost>): Promi
 
 // Delete a blog post
 export const deleteBlogPost = async (id: number): Promise<boolean> => {
-  if (!isSupabaseConfigured) {
-    console.warn('Cannot delete blog post: Supabase not configured');
-    return false;
-  }
-  
   try {
     const { error } = await supabase
-      .from('blog_posts')
+      .from('posts')
       .delete()
       .eq('id', id);
       
