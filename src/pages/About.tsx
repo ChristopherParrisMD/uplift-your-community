@@ -32,26 +32,6 @@ const About = () => {
           </div>
         </section>
         
-        {/* Our Story Section */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-10">Our Story</h2>
-              <div className="prose prose-lg mx-auto">
-                <p>
-                  My Insight Ally was founded in 2023 by a group of mental health professionals, technology experts, and individuals with lived experience of mental health challenges. Our founders recognized that despite growing awareness of mental health issues, many people still face significant barriers to accessing quality information and support.
-                </p>
-                <p>
-                  What began as a small resource hub has grown into a comprehensive platform dedicated to mental health education, connection, and empowerment. We believe that everyone deserves access to mental health resources, regardless of their background, location, or financial situation.
-                </p>
-                <p>
-                  Today, My Insight Ally serves thousands of visitors each month, providing evidence-based information, tools, and community support to help people navigate their mental health journeys with confidence and hope.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        
         {/* Our Values Section */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
