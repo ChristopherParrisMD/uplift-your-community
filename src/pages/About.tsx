@@ -85,52 +85,6 @@ const About = () => {
             </div>
           </div>
         </section>
-        
-        {/* Our Partners Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">Our Partners</h2>
-            
-            <p className="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
-              We collaborate with leading organizations in mental health, healthcare, education, and technology to expand our reach and impact.
-            </p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="h-20 w-40 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">Partner Logo</div>
-                <p className="mt-2 text-mindful-600 font-medium">Coming Soon</p>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       
       <Footer />
