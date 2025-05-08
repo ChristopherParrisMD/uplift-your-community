@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -28,8 +29,8 @@ const Hero = () => {
           <div className="md:w-1/2 relative">
             <div className="relative w-full h-64 md:h-96 animate-float">
               <img
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                alt="Person using a laptop for mental wellness"
+                src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Woman enjoying time with family at a park"
                 className="w-full h-full object-cover rounded-2xl shadow-xl"
                 loading="eager"
               />

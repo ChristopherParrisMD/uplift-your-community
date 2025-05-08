@@ -8,6 +8,7 @@ import TherapistMap from "./TherapistMap";
 interface Therapist {
   id: string;
   name: string;
+  image: string;
   specialty: string;
   location: string;
   rating: number;
