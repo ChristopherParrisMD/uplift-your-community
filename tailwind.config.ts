@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,46 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				mindful: {
+					50: '#f0f9ff',
+					100: '#e0f3fe',
+					200: '#bae5fd',
+					300: '#7dd0fc',
+					400: '#38b6f8',
+					500: '#0e9de9',
+					600: '#0284c7',
+					700: '#036ba1',
+					800: '#075b85',
+					900: '#0c4d6f',
+					950: '#083045',
+				},
+				calm: {
+					50: '#f0fdf6',
+					100: '#dcfcea',
+					200: '#bbf7d6',
+					300: '#86edb7',
+					400: '#4ad892',
+					500: '#23bd74',
+					600: '#17a163',
+					700: '#137f51',
+					800: '#136544',
+					900: '#11533a',
+					950: '#042f20',
+				},
+				warm: {
+					50: '#fff8ed',
+					100: '#ffeed4',
+					200: '#ffd9a8',
+					300: '#ffbe71',
+					400: '#ff973c',
+					500: '#fe7514',
+					600: '#ef5c08',
+					700: '#c54309',
+					800: '#9c360f',
+					900: '#7e2f0f',
+					950: '#451505',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,12 +124,25 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)',
+					},
+					'50%': {
+						transform: 'translateY(-10px)',
+					},
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite',
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				display: ['Montserrat', 'sans-serif'],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
