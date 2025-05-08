@@ -1,3 +1,4 @@
+
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -170,17 +171,6 @@ const FindingHelp = () => {
                 </Card>
               </TabsContent>
             </Tabs>
-            
-            <div className="mt-16 bg-white rounded-lg border p-6 md:p-8 shadow-sm">
-              <h2 className="text-2xl font-bold mb-6">Additional Resources</h2>
-              <div className="grid md:grid-cols-1 gap-6">
-                <ResourceCard 
-                  title="Crisis Resources" 
-                  description="Immediate help for mental health emergencies, including hotlines and text services."
-                  link="/resources"
-                />
-              </div>
-            </div>
           </div>
         </div>
       </main>
