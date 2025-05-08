@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import TherapistFinder from "./pages/TherapistFinder";
+import TherapistProfile from "./pages/TherapistProfile";
 import Blog from "./pages/Blog";
 import Resources from "./pages/Resources";
 import Signup from "./pages/Signup";
@@ -21,6 +23,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/therapist-finder" element={<TherapistFinder />} />
+          <Route path="/therapist/:id" element={<TherapistProfile />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/signup" element={<Signup />} />

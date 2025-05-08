@@ -2,14 +2,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, MapPin, Search, User, Star, Clock, DollarSign, Map, Phone, Mail } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Search, MapPin, Map } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { toast } from "@/components/ui/use-toast";
+import TherapistCard from "./therapist/TherapistCard";
+import TherapistMap from "./therapist/TherapistMap";
+import SearchFilters from "./therapist/SearchFilters";
 
 // Fix for default marker icons in Leaflet with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -19,7 +19,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Remove the mock data constants since we'll get them from the API
 const API_URL = 'http://localhost:3001/api';
 
 const specialties = [
@@ -65,7 +64,7 @@ const TherapistSearch = () => {
   const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showMap, setShowMap] = useState(false);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([37.7749, -122.4194]); // Default to SF
+  const [mapCenter, setMapCenter] = useState<[number, number]>([42.3314, -83.0458]); // Default to Detroit
 
   // Get user's location
   useEffect(() => {
@@ -128,6 +127,12 @@ const TherapistSearch = () => {
         });
       } else {
         setTherapists(data);
+        
+        // Set map center to the first result's coordinates if available
+        if (data[0]?.coordinates) {
+          setMapCenter(data[0].coordinates);
+        }
+        
         setShowMap(true);
         toast({
           title: "Search Complete",
@@ -230,64 +235,17 @@ const TherapistSearch = () => {
         </TabsContent>
         
         <TabsContent value="filters">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Specialty</label>
-              <Select 
-                value={specialty} 
-                onValueChange={setSpecialty}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select specialty" />
-                </SelectTrigger>
-                <SelectContent>
-                  {specialties.map((spec) => (
-                    <SelectItem key={spec} value={spec.toLowerCase()}>
-                      {spec}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Insurance</label>
-              <Select 
-                value={insurance} 
-                onValueChange={setInsurance}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select insurance" />
-                </SelectTrigger>
-                <SelectContent>
-                  {insuranceOptions.map((ins) => (
-                    <SelectItem key={ins} value={ins.toLowerCase()}>
-                      {ins}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
-              <Select 
-                value={sortBy} 
-                onValueChange={setSortBy}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sortOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <SearchFilters 
+            specialty={specialty}
+            setSpecialty={setSpecialty}
+            insurance={insurance}
+            setInsurance={setInsurance}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            specialties={specialties}
+            insuranceOptions={insuranceOptions}
+            sortOptions={sortOptions}
+          />
 
           <Button 
             className="bg-mindful-600 hover:bg-mindful-700" 
@@ -340,43 +298,7 @@ const TherapistSearch = () => {
             <p className="text-gray-500 mt-2">Try adjusting your filters or search in a different location.</p>
           </div>
         ) : showMap ? (
-          <div className="h-[600px] rounded-lg overflow-hidden border">
-            <MapContainer
-              center={mapCenter}
-              zoom={11}
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              {therapists.map((therapist) => (
-                <Marker
-                  key={therapist.id}
-                  position={therapist.coordinates as [number, number]}
-                >
-                  <Popup>
-                    <div className="p-2">
-                      <h4 className="font-bold">{therapist.name}</h4>
-                      <p className="text-sm text-gray-600">{therapist.specialty}</p>
-                      <p className="text-sm text-gray-500">{therapist.location}</p>
-                      <div className="mt-2 flex items-center text-sm">
-                        <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                        <span>{therapist.rating} ({therapist.reviews} reviews)</span>
-                      </div>
-                      <Button
-                        size="sm"
-                        className="mt-2 w-full"
-                        onClick={() => setShowMap(false)}
-                      >
-                        View Profile
-                      </Button>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          </div>
+          <TherapistMap therapists={therapists} mapCenter={mapCenter} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {therapists.map((therapist) => (
@@ -388,84 +310,5 @@ const TherapistSearch = () => {
     </div>
   );
 };
-
-// Update the therapist card to remove the NPI information which isn't in the data
-const TherapistCard = ({ therapist }) => (
-  <Card key={therapist.id} className="card-hover overflow-hidden">
-    <CardContent className="p-0">
-      <div className="flex flex-col sm:flex-row">
-        <div className="sm:w-1/3">
-          <img 
-            src={therapist.image} 
-            alt={therapist.name} 
-            className="w-full h-full object-cover aspect-square"
-          />
-        </div>
-        <div className="p-4 sm:p-6 sm:w-2/3">
-          <div className="flex justify-between items-start">
-            <div>
-              <h4 className="font-bold text-lg">{therapist.name}</h4>
-              {therapist.credentials && (
-                <span className="text-sm text-gray-600">{therapist.credentials}</span>
-              )}
-            </div>
-            <div className="flex items-center bg-mindful-50 px-2 py-1 rounded-full text-xs text-mindful-800">
-              <Star className="h-3 w-3 mr-1" />
-              <span className="font-medium">{therapist.rating}</span>
-              <span className="ml-1 text-gray-500">({therapist.reviews})</span>
-            </div>
-          </div>
-          
-          <p className="text-gray-600 mt-1">{therapist.specialty}</p>
-          
-          <div className="flex items-center mt-3 text-sm text-gray-500">
-            <MapPin className="h-4 w-4 mr-1" />
-            <span>{therapist.location}</span>
-          </div>
-
-          {therapist.practiceAddress && (
-            <div className="mt-2 text-sm text-gray-500">
-              <p>{therapist.practiceAddress.street}</p>
-              <p>{therapist.practiceAddress.city}, {therapist.practiceAddress.state} {therapist.practiceAddress.zip}</p>
-            </div>
-          )}
-
-          {therapist.phone && (
-            <div className="flex items-center mt-2 text-sm text-gray-500">
-              <Phone className="h-4 w-4 mr-1" />
-              <span>{therapist.phone}</span>
-            </div>
-          )}
-
-          {therapist.email && (
-            <div className="flex items-center mt-2 text-sm text-gray-500">
-              <Mail className="h-4 w-4 mr-1" />
-              <span>{therapist.email}</span>
-            </div>
-          )}
-
-          <div className="mt-3 flex flex-wrap gap-1">
-            {therapist.languages?.map((lang, idx) => (
-              <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
-                {lang}
-              </span>
-            ))}
-          </div>
-          
-          <div className="mt-4 flex justify-between items-center">
-            <div className="flex flex-col">
-              {therapist.gender && (
-                <span className="text-xs text-gray-500">Gender: {therapist.gender}</span>
-              )}
-            </div>
-            <Button size="sm" variant="outline">
-              View Profile
-            </Button>
-          </div>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
 
 export default TherapistSearch;
