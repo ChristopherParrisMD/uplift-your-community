@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +7,6 @@ import Index from "./pages/Index";
 import TherapistFinder from "./pages/TherapistFinder";
 import Blog from "./pages/Blog";
 import Resources from "./pages/Resources";
-import MentalHealthFirstAid from "./pages/MentalHealthFirstAid";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
@@ -25,7 +23,6 @@ const App = () => (
           <Route path="/therapist-finder" element={<TherapistFinder />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/resources" element={<Resources />} />
-          <Route path="/mental-health-first-aid" element={<MentalHealthFirstAid />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

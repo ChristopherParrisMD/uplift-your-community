@@ -1,4 +1,3 @@
-
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -28,11 +27,10 @@ const Resources = () => {
         <section className="py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Tabs defaultValue="self-help" className="space-y-8">
-              <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-2 md:grid-cols-4 gap-2">
+              <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-2 md:grid-cols-3 gap-2">
                 <TabsTrigger value="self-help">Self-Help Tools</TabsTrigger>
                 <TabsTrigger value="crisis">Crisis Resources</TabsTrigger>
                 <TabsTrigger value="education">Education</TabsTrigger>
-                <TabsTrigger value="support">Support Others</TabsTrigger>
               </TabsList>
               
               <TabsContent value="self-help" className="space-y-8">
@@ -72,46 +70,6 @@ const Resources = () => {
                       title="Positive Psychology Exercises"
                       description="Science-based exercises to build resilience, increase positive emotions, and enhance your overall well-being."
                       icon={<PositivityIcon />}
-                    />
-                  </div>
-                </div>
-                
-                <div className="p-8 bg-mindful-50 rounded-lg border border-mindful-100">
-                  <h3 className="text-xl font-semibold mb-2">Popular Mental Health Apps</h3>
-                  <p className="text-gray-600 mb-6">
-                    These mobile applications can help you practice mindfulness, track your mood, and develop coping skills.
-                  </p>
-                  
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <AppCard
-                      name="Calm"
-                      category="Meditation & Sleep"
-                      rating="4.8/5"
-                    />
-                    <AppCard
-                      name="Headspace"
-                      category="Guided Meditation"
-                      rating="4.9/5"
-                    />
-                    <AppCard
-                      name="Woebot"
-                      category="AI Therapy Chat"
-                      rating="4.7/5"
-                    />
-                    <AppCard
-                      name="Daylio"
-                      category="Mood Tracking"
-                      rating="4.8/5"
-                    />
-                    <AppCard
-                      name="Youper"
-                      category="AI Emotional Health"
-                      rating="4.7/5"
-                    />
-                    <AppCard
-                      name="Insight Timer"
-                      category="Free Meditation"
-                      rating="4.9/5"
                     />
                   </div>
                 </div>
@@ -242,102 +200,6 @@ const Resources = () => {
                   </div>
                 </div>
               </TabsContent>
-              
-              <TabsContent value="support" className="space-y-8">
-                <div className="bg-white shadow-sm rounded-lg p-6 md:p-8">
-                  <h2 className="text-2xl font-bold mb-6">Supporting Others</h2>
-                  <p className="text-gray-600 mb-8">
-                    Learn how to effectively support friends, family members, or colleagues who may be struggling with their mental health.
-                  </p>
-                  
-                  <div className="space-y-8">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-4">How to Have Supportive Conversations</h3>
-                      <div className="bg-calm-50 rounded-lg p-6">
-                        <ol className="space-y-4 text-gray-700">
-                          <li className="flex">
-                            <span className="font-bold mr-2">1.</span>
-                            <div>
-                              <p className="font-medium">Choose the right time and place</p>
-                              <p className="text-sm mt-1">Find a quiet, private setting where the person will feel comfortable and there's enough time to talk.</p>
-                            </div>
-                          </li>
-                          <li className="flex">
-                            <span className="font-bold mr-2">2.</span>
-                            <div>
-                              <p className="font-medium">Start with open-ended questions</p>
-                              <p className="text-sm mt-1">Ask questions like "How have you been feeling lately?" rather than yes/no questions.</p>
-                            </div>
-                          </li>
-                          <li className="flex">
-                            <span className="font-bold mr-2">3.</span>
-                            <div>
-                              <p className="font-medium">Listen actively without judgment</p>
-                              <p className="text-sm mt-1">Give your full attention, maintain eye contact, and avoid interrupting or offering quick solutions.</p>
-                            </div>
-                          </li>
-                          <li className="flex">
-                            <span className="font-bold mr-2">4.</span>
-                            <div>
-                              <p className="font-medium">Validate their feelings</p>
-                              <p className="text-sm mt-1">Say things like "That sounds really difficult" or "It makes sense you'd feel that way."</p>
-                            </div>
-                          </li>
-                          <li className="flex">
-                            <span className="font-bold mr-2">5.</span>
-                            <div>
-                              <p className="font-medium">Avoid giving unsolicited advice</p>
-                              <p className="text-sm mt-1">Instead of telling them what to do, ask "How can I support you right now?"</p>
-                            </div>
-                          </li>
-                        </ol>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-semibold mb-4">Supporting Different People in Your Life</h3>
-                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <SupportCard 
-                          title="Supporting a Partner"
-                          description="How to balance being supportive while maintaining healthy relationship boundaries."
-                        />
-                        <SupportCard 
-                          title="Helping a Friend"
-                          description="Ways to show up for friends experiencing mental health challenges."
-                        />
-                        <SupportCard 
-                          title="Supporting a Child or Teen"
-                          description="Age-appropriate ways to discuss mental health and get help for young people."
-                        />
-                        <SupportCard 
-                          title="Workplace Mental Health"
-                          description="Creating supportive environments and helping colleagues in distress."
-                        />
-                        <SupportCard 
-                          title="Supporting Older Adults"
-                          description="Understanding the unique mental health needs of aging populations."
-                        />
-                        <SupportCard 
-                          title="Self-Care for Caregivers"
-                          description="How to maintain your own well-being while supporting others."
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="bg-mindful-50 p-6 rounded-lg border border-mindful-100">
-                      <h3 className="text-xl font-semibold mb-4">Mental Health First Aid Training</h3>
-                      <p className="text-gray-700 mb-4">
-                        Mental Health First Aid is a skills-based training that teaches people how to identify, understand, and respond to signs and symptoms of mental health and substance use challenges.
-                      </p>
-                      <Button asChild className="bg-mindful-600 hover:bg-mindful-700">
-                        <Link to="/mental-health-first-aid">
-                          Learn About Training Options
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
             </Tabs>
           </div>
         </section>
@@ -363,51 +225,27 @@ const ResourceCard = ({ title, description, icon }: { title: string; description
 );
 
 const CrisisResource = ({ name, number, description }: { name: string; number: string; description: string }) => (
-  <div className="border rounded-lg p-6 bg-white shadow-sm">
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+  <div className="border rounded-lg p-5 bg-white shadow-sm hover:border-mindful-300 transition-colors">
+    <div className="flex justify-between items-start">
       <div>
-        <h3 className="font-bold text-xl">{name}</h3>
-        <div className="mt-2 text-xl font-semibold text-mindful-700">{number}</div>
-        <p className="mt-2 text-gray-600 max-w-2xl">{description}</p>
+        <h4 className="font-bold mb-1">{name}</h4>
+        <p className="text-gray-600 text-sm mb-2">{description}</p>
       </div>
-      <div className="mt-4 md:mt-0">
-        <Button className="bg-green-600 hover:bg-green-700">
-          <a href={`tel:${number.replace(/\D/g, '')}`}>Call Now</a>
-        </Button>
-      </div>
-    </div>
-  </div>
-);
-
-const AppCard = ({ name, category, rating }: { name: string; category: string; rating: string }) => (
-  <div className="bg-white rounded-lg border p-4 flex items-center">
-    <div className="bg-gradient-to-br from-mindful-100 to-mindful-200 w-12 h-12 rounded-lg flex items-center justify-center">
-      <span className="font-bold text-mindful-600">{name.substring(0, 1)}</span>
-    </div>
-    <div className="ml-4">
-      <h4 className="font-medium">{name}</h4>
-      <div className="flex justify-between text-xs text-gray-500 mt-1">
-        <span>{category}</span>
-        <span className="ml-2">⭐ {rating}</span>
+      <div className="bg-mindful-50 px-4 py-2 rounded-full text-mindful-700 font-medium">
+        {number}
       </div>
     </div>
   </div>
 );
 
 const EducationCard = ({ title, type, description }: { title: string; type: string; description: string }) => (
-  <div className="border rounded-lg p-5 bg-white shadow-sm hover:shadow transition-shadow">
-    <div className="text-xs font-medium text-mindful-600 mb-2">{type}</div>
-    <h3 className="font-bold mb-2">{title}</h3>
-    <p className="text-gray-600 text-sm mb-4">{description}</p>
-    <Button variant="outline" size="sm">Read More</Button>
-  </div>
-);
-
-const SupportCard = ({ title, description }: { title: string; description: string }) => (
   <div className="border rounded-lg p-5 bg-white shadow-sm hover:border-mindful-300 transition-colors">
+    <div className="bg-mindful-50 text-mindful-700 text-xs font-medium px-2 py-1 rounded-full inline-block mb-3">
+      {type}
+    </div>
     <h4 className="font-bold mb-2">{title}</h4>
     <p className="text-gray-600 text-sm mb-3">{description}</p>
-    <Button variant="link" className="text-mindful-700 p-0">Read Guide →</Button>
+    <Button variant="link" className="text-mindful-700 p-0">Read More →</Button>
   </div>
 );
 
@@ -420,7 +258,7 @@ const AnxietyIcon = () => (
 
 const MindfulnessIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
   </svg>
 );
 
@@ -438,13 +276,13 @@ const MoodIcon = () => (
 
 const StressIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
 const PositivityIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mindful-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
