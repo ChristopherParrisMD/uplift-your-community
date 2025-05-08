@@ -75,47 +75,6 @@ const Resources = () => {
                 />
               </div>
             </div>
-            
-            {/* Self-Help Books Section */}
-            <div className="bg-white shadow-sm rounded-lg p-6 md:p-8">
-              <h2 className="text-2xl font-bold mb-6">Recommended Self-Help Books</h2>
-              <p className="text-gray-600 mb-8">
-                Evidence-based reading recommendations from mental health professionals.
-              </p>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <BookCard 
-                  title="The Body Keeps the Score" 
-                  author="Bessel van der Kolk"
-                  topic="Trauma Recovery"
-                />
-                <BookCard 
-                  title="Feeling Good" 
-                  author="David D. Burns"
-                  topic="Depression & Anxiety"
-                />
-                <BookCard 
-                  title="Atomic Habits" 
-                  author="James Clear"
-                  topic="Habit Formation"
-                />
-                <BookCard 
-                  title="Self-Compassion" 
-                  author="Kristin Neff"
-                  topic="Self-Acceptance"
-                />
-                <BookCard 
-                  title="The Gifts of Imperfection" 
-                  author="Brené Brown"
-                  topic="Authenticity & Self-Worth"
-                />
-                <BookCard 
-                  title="Why We Sleep" 
-                  author="Matthew Walker"
-                  topic="Sleep Science"
-                />
-              </div>
-            </div>
           </div>
         </section>
         
@@ -150,17 +109,6 @@ const CrisisResource = ({ name, number, description }: { name: string; number: s
         {number}
       </div>
     </div>
-  </div>
-);
-
-const BookCard = ({ title, author, topic }: { title: string; author: string; topic: string }) => (
-  <div className="border rounded-lg p-5 bg-white shadow-sm hover:border-mindful-300 transition-colors">
-    <div className="bg-mindful-50 text-mindful-700 text-xs font-medium px-2 py-1 rounded-full inline-block mb-3">
-      {topic}
-    </div>
-    <h4 className="font-bold mb-1">{title}</h4>
-    <p className="text-gray-500 text-sm mb-3">by {author}</p>
-    <Button variant="link" className="text-mindful-700 p-0">Learn More →</Button>
   </div>
 );
 
