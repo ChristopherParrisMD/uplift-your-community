@@ -1,84 +1,15 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/BlogCard";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Updated blog data with real articles
-const allPosts = [
-  {
-    id: 1,
-    title: "Teens With Mental Health Conditions Use Social Media Differently Than Their Peers",
-    excerpt: "This groundbreaking study is one of the first to use clinical-level diagnoses to reveal distinct differences in social media usage patterns between teens with mental health conditions and their peers.",
-    author: {
-      name: "ScienceDaily",
-      role: "Research Publication",
-      avatar: "https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    publishDate: "May 5, 2025",
-    readTime: "8 min read",
-    category: "Research",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-  },
-  {
-    id: 2,
-    title: "New Non-Invasive Brain Stimulation Technique Shows Significant Reduction in Depression, Anxiety and PTSD Symptoms",
-    excerpt: "This research demonstrates how a novel sound wave therapy can directly target deep brain regions, offering significant reductions in symptoms of depression, anxiety, and PTSD.",
-    author: {
-      name: "ScienceDaily",
-      role: "Research Publication",
-      avatar: "https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    publishDate: "Apr 28, 2025",
-    readTime: "10 min read",
-    category: "Treatment",
-    image: "https://images.unsplash.com/photo-1587573089734-599851b2c3b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 3,
-    title: "How a Smartphone App Could Transform Mental Health Care",
-    excerpt: "This article explores how smartphones, often considered sources of stress, could actually become powerful solutions for mental health treatment through innovative applications.",
-    author: {
-      name: "ScienceDaily",
-      role: "Research Publication",
-      avatar: "https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    publishDate: "Apr 23, 2025",
-    readTime: "7 min read",
-    category: "Technology",
-    image: "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 4,
-    title: "What happens when people put their phones down and eat together?",
-    excerpt: "This article examines the mental health benefits of \"Community Plate\" initiatives that bring people together over shared potluck suppers, promoting social connection.",
-    author: {
-      name: "NPR",
-      role: "News Publication",
-      avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    publishDate: "May 7, 2025",
-    readTime: "6 min read",
-    category: "Connection",
-    image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 5,
-    title: "Psychotherapy Becoming More Accessible",
-    excerpt: "This study from the American Journal of Psychiatry suggests that more people are starting and staying with psychotherapy than in previous years, indicating improved accessibility to mental health treatment.",
-    author: {
-      name: "NPR",
-      role: "News Publication",
-      avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    },
-    publishDate: "May 5, 2025",
-    readTime: "5 min read",
-    category: "Accessibility",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-  }
-];
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getBlogPosts } from "@/services/blogService";
+import { BlogPost, BlogCategory } from "@/types/blog";
+import { toast } from "@/hooks/use-toast";
 
 const categories = [
   "All",
@@ -90,19 +21,49 @@ const categories = [
 ];
 
 const Blog = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState<BlogCategory>("All");
+  const [visiblePosts, setVisiblePosts] = useState<number>(6);
   
-  // Filter posts based on category only (removed search filtering)
-  const filteredPosts = allPosts.filter(post => {
+  // Fetch blog posts using React Query
+  const { 
+    data: blogPosts = [], 
+    isLoading, 
+    error 
+  } = useQuery({
+    queryKey: ['blogPosts'],
+    queryFn: getBlogPosts,
+  });
+  
+  // Show error toast if fetching fails
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error loading blog posts",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  }, [error]);
+  
+  // Filter posts based on category
+  const filteredPosts = blogPosts.filter(post => {
     return activeCategory === "All" || post.category === activeCategory;
   });
+  
+  // Posts to display based on load more pagination
+  const displayedPosts = filteredPosts.slice(0, visiblePosts);
+  
+  // Load more posts
+  const handleLoadMore = () => {
+    setVisiblePosts(prev => prev + 6);
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
       
       <main className="flex-grow bg-white">
-        {/* Hero Section - Removed search bar */}
+        {/* Hero Section */}
         <section className="bg-gradient-to-b from-mindful-50 to-white py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto">
@@ -118,7 +79,7 @@ const Blog = () => {
         <section className="py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="overflow-x-auto pb-4 mb-8">
-              <Tabs defaultValue="All" value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+              <Tabs defaultValue="All" value={activeCategory} onValueChange={(value) => setActiveCategory(value as BlogCategory)} className="w-full">
                 <TabsList className="inline-flex w-max space-x-1 p-1">
                   {categories.map((category) => (
                     <TabsTrigger
@@ -133,19 +94,53 @@ const Blog = () => {
               </Tabs>
             </div>
             
-            {filteredPosts.length > 0 ? (
+            {isLoading ? (
+              // Loading skeleton
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array(6).fill(0).map((_, index) => (
+                  <div key={index} className="flex flex-col space-y-3 rounded-lg border p-4">
+                    <Skeleton className="h-60 w-full rounded-md" />
+                    <Skeleton className="h-6 w-3/4 rounded-md" />
+                    <Skeleton className="h-4 w-full rounded-md" />
+                    <Skeleton className="h-4 w-full rounded-md" />
+                    <Skeleton className="h-10 w-24 rounded-md" />
+                  </div>
+                ))}
+              </div>
+            ) : displayedPosts.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredPosts.map((post) => (
-                    <BlogCard key={post.id} post={post} />
+                  {displayedPosts.map((post) => (
+                    <BlogCard key={post.id} post={{
+                      id: post.id,
+                      title: post.title,
+                      excerpt: post.excerpt,
+                      author: {
+                        name: post.author_name,
+                        role: post.author_role,
+                        avatar: post.author_avatar
+                      },
+                      publishDate: post.publish_date,
+                      readTime: post.read_time,
+                      category: post.category,
+                      image: post.image_url,
+                      featured: post.featured
+                    }} />
                   ))}
                 </div>
                 
-                <div className="mt-12 flex justify-center">
-                  <Button variant="outline" size="lg" className="rounded-full px-8">
-                    Load More Articles
-                  </Button>
-                </div>
+                {filteredPosts.length > visiblePosts && (
+                  <div className="mt-12 flex justify-center">
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      className="rounded-full px-8"
+                      onClick={handleLoadMore}
+                    >
+                      Load More Articles
+                    </Button>
+                  </div>
+                )}
               </>
             ) : (
               <div className="text-center py-12">
