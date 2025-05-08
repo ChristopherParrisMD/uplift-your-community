@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import NavBar from "@/components/NavBar";
@@ -9,9 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getBlogPosts } from "@/services/blogService";
 import { BlogPost, BlogCategory } from "@/types/blog";
 import { toast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Settings } from "lucide-react";
 
 const categories = [
   "All",
@@ -74,19 +73,6 @@ const Blog = () => {
               <p className="mt-6 text-xl text-gray-600">
                 Research-backed articles, expert insights, and news on the latest developments in mental health care.
               </p>
-              
-              <div className="mt-6 flex justify-end">
-                <Link to={user ? "/blog-admin" : "/admin-login"}>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-gray-500 hover:text-gray-700"
-                    aria-label="Blog settings"
-                  >
-                    <Settings size={18} />
-                  </Button>
-                </Link>
-              </div>
             </div>
           </div>
         </section>
