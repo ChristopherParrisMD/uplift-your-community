@@ -36,9 +36,6 @@ const Privacy = () => {
                 <ul className="list-disc pl-5 mb-4">
                   <li>Name</li>
                   <li>Email address</li>
-                  <li>Phone number</li>
-                  <li>Mailing address</li>
-                  <li>Information you provide in form submissions</li>
                 </ul>
                 
                 <h3 className="text-lg font-medium mt-4 mb-2">Usage Data</h3>
@@ -124,23 +121,10 @@ const Privacy = () => {
                 </p>
               </section>
               
-              <section className="mb-8">
+              <section>
                 <h2 className="text-xl font-semibold mb-3">Changes to This Privacy Policy</h2>
                 <p>
                   We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. You are advised to review this Privacy Policy periodically for any changes.
-                </p>
-              </section>
-              
-              <section>
-                <h2 className="text-xl font-semibold mb-3">Contact Us</h2>
-                <p>
-                  If you have questions or concerns about this Privacy Policy, please contact us at:
-                </p>
-                <p className="mt-2">
-                  <strong>Email:</strong> privacy@myinsightally.com<br />
-                  <strong>Mail:</strong> My Insight Ally<br />
-                  123 Wellness Avenue, Suite 200<br />
-                  Springfield, IL 62701
                 </p>
               </section>
             </div>
