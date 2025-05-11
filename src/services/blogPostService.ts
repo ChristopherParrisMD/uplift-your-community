@@ -228,15 +228,16 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
       title: data[0].title,
       excerpt: data[0].excerpt || '',
       content: data[0].content || '',
-      // Preserve original author information unless specifically changed
-      author_name: post.author_name || (originalPost?.author_name || 'Anonymous'),
-      author_role: post.author_role || (originalPost?.author_role || 'Author'),
-      author_avatar: post.author_avatar || (originalPost?.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80'),
+      // Use the post values if provided, otherwise use default values
+      // We can't rely on originalPost having author fields since they're not in the database
+      author_name: post.author_name || 'Anonymous',
+      author_role: post.author_role || 'Author',
+      author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
       publish_date: data[0].published_at ? new Date(data[0].published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: post.read_time || (originalPost?.read_time || `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`),
+      read_time: post.read_time || `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
       category: data[0].category || 'Research', // Use the updated category from database
-      image_url: data[0].featured_image || '',
-      featured: post.featured || (originalPost?.featured || false),
+      image_url: data[0].featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      featured: post.featured || false,
       slug: data[0].slug
     };
   } catch (error) {
