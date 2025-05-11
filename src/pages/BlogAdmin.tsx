@@ -1,7 +1,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, uploadBlogImage } from "@/services/blogService";
+import { 
+  getBlogPosts, 
+  createBlogPost, 
+  updateBlogPost, 
+  deleteBlogPost, 
+  uploadBlogImage, 
+  uploadAuthorAvatar 
+} from "@/services/blogService";
 import { BlogPost } from "@/types/blog";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
@@ -11,10 +18,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Edit, Trash2, Plus, LogOut, Upload, Image, X } from "lucide-react";
+import { Edit, Trash2, Plus, LogOut, Upload, Image, X, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const BlogAdmin = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -35,8 +43,11 @@ const BlogAdmin = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isAvatarUploading, setIsAvatarUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -75,6 +86,14 @@ const BlogAdmin = () => {
     handleInputChange(e);
   };
   
+  const handleAvatarUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Clear selected avatar if user enters a URL manually
+    if (e.target.value && selectedAvatar) {
+      setSelectedAvatar(null);
+    }
+    handleInputChange(e);
+  };
+  
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -107,6 +126,38 @@ const BlogAdmin = () => {
     setFormData(prev => ({ ...prev, image_url: imageUrl }));
   };
   
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({ 
+        title: "Invalid file type", 
+        description: "Please upload a JPG, PNG, GIF, or WebP image", 
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    // Validate file size (max 2MB for avatar)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ 
+        title: "File too large", 
+        description: "Avatar must be smaller than 2MB", 
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    setSelectedAvatar(file);
+    
+    // Create a preview URL
+    const avatarUrl = URL.createObjectURL(file);
+    setFormData(prev => ({ ...prev, author_avatar: avatarUrl }));
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -120,13 +171,12 @@ const BlogAdmin = () => {
         return;
       }
       
-      // First upload the image if a file was selected
-      let imageUrl = formData.image_url;
+      setIsUploading(true);
       
+      // First upload the featured image if a file was selected
+      let imageUrl = formData.image_url;
       if (selectedFile) {
-        setIsUploading(true);
         const uploadedUrl = await uploadBlogImage(selectedFile);
-        setIsUploading(false);
         
         if (!uploadedUrl) {
           toast({ 
@@ -134,18 +184,50 @@ const BlogAdmin = () => {
             description: "Please try again or use an external image URL", 
             variant: "destructive" 
           });
+          setIsUploading(false);
           return;
         }
         
         imageUrl = uploadedUrl;
-        setFormData(prev => ({ ...prev, image_url: uploadedUrl }));
       }
+      
+      // Then upload the author avatar if selected
+      let avatarUrl = formData.author_avatar;
+      if (selectedAvatar) {
+        setIsAvatarUploading(true);
+        const uploadedAvatarUrl = await uploadAuthorAvatar(selectedAvatar);
+        setIsAvatarUploading(false);
+        
+        if (!uploadedAvatarUrl) {
+          toast({ 
+            title: "Avatar upload failed", 
+            description: "Please try again or use an external avatar URL", 
+            variant: "destructive" 
+          });
+          // Continue with the default avatar
+          avatarUrl = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80';
+        } else {
+          avatarUrl = uploadedAvatarUrl;
+        }
+      }
+      
+      // Set default avatar if none provided
+      if (!avatarUrl) {
+        avatarUrl = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80';
+      }
+      
+      // Update form data with final URLs
+      const updatedFormData = { 
+        ...formData, 
+        image_url: imageUrl, 
+        author_avatar: avatarUrl 
+      };
 
       if (editingId) {
-        await updateBlogPost(editingId, { ...formData, image_url: imageUrl });
+        await updateBlogPost(editingId, updatedFormData);
         toast({ title: "Blog post updated successfully" });
       } else {
-        const result = await createBlogPost({ ...formData as Omit<BlogPost, 'id' | 'created_at'>, image_url: imageUrl || '' });
+        const result = await createBlogPost({ ...updatedFormData as Omit<BlogPost, 'id' | 'created_at'> });
         if (result) {
           toast({ title: "Blog post created successfully" });
         } else {
@@ -166,6 +248,9 @@ const BlogAdmin = () => {
         description: "Please try again", 
         variant: "destructive" 
       });
+    } finally {
+      setIsUploading(false);
+      setIsAvatarUploading(false);
     }
   };
   
@@ -186,6 +271,7 @@ const BlogAdmin = () => {
     setEditingId(post.id);
     setIsEditing(true);
     setSelectedFile(null);
+    setSelectedAvatar(null);
     window.scrollTo(0, 0);
   };
   
@@ -233,10 +319,14 @@ const BlogAdmin = () => {
     setEditingId(null);
     setIsEditing(false);
     setSelectedFile(null);
+    setSelectedAvatar(null);
     
-    // Reset file input
+    // Reset file inputs
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+    if (avatarInputRef.current) {
+      avatarInputRef.current.value = '';
     }
   };
   
@@ -265,6 +355,24 @@ const BlogAdmin = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+  
+  // Function to clear selected avatar
+  const clearSelectedAvatar = () => {
+    setSelectedAvatar(null);
+    setFormData(prev => ({ ...prev, author_avatar: '' }));
+    if (avatarInputRef.current) {
+      avatarInputRef.current.value = '';
+    }
+  };
+  
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   };
   
   return (
@@ -462,15 +570,80 @@ const BlogAdmin = () => {
                       />
                     </div>
                     
-                    <div>
-                      <Label htmlFor="author_avatar">Author Avatar URL</Label>
-                      <Input 
-                        id="author_avatar"
-                        name="author_avatar"
-                        value={formData.author_avatar}
-                        onChange={handleInputChange}
-                        required
-                      />
+                    {/* Author Avatar Upload and Preview */}
+                    <div className="space-y-2">
+                      <Label>Author Avatar</Label>
+                      <div className="flex items-center space-x-4 mb-3">
+                        <Avatar className="h-16 w-16">
+                          <AvatarImage 
+                            src={formData.author_avatar} 
+                            alt={formData.author_name || "Author"} 
+                          />
+                          <AvatarFallback>
+                            {formData.author_name ? getInitials(formData.author_name) : "AU"}
+                          </AvatarFallback>
+                        </Avatar>
+                        {formData.author_avatar && (
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm"
+                            className="flex items-center gap-1"
+                            onClick={clearSelectedAvatar}
+                          >
+                            <X size={14} /> Remove
+                          </Button>
+                        )}
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label htmlFor="avatar_upload" className="mb-1 block">Upload Avatar</Label>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              type="button"
+                              variant="outline"
+                              className="flex items-center gap-2"
+                              onClick={() => avatarInputRef.current?.click()}
+                              disabled={isAvatarUploading}
+                            >
+                              {isAvatarUploading ? "Uploading..." : "Choose Avatar"}
+                              <User size={16} />
+                            </Button>
+                            {selectedAvatar && (
+                              <span className="text-sm text-gray-600 truncate max-w-[200px]">
+                                {selectedAvatar.name}
+                              </span>
+                            )}
+                          </div>
+                          <input 
+                            ref={avatarInputRef}
+                            id="avatar_upload"
+                            type="file" 
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleAvatarChange}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="author_avatar" className="flex items-center gap-1">
+                            <span>Or use avatar URL</span>
+                            {selectedAvatar && <span className="text-xs text-gray-500">(will override uploaded file)</span>}
+                          </Label>
+                          <Input 
+                            id="author_avatar"
+                            name="author_avatar"
+                            value={selectedAvatar ? "" : formData.author_avatar || ""}
+                            onChange={handleAvatarUrlChange}
+                            placeholder="https://example.com/avatar.jpg"
+                            disabled={!!selectedAvatar}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Leave empty for default avatar
+                          </p>
+                        </div>
+                      </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
@@ -518,8 +691,10 @@ const BlogAdmin = () => {
                   <Button type="button" variant="outline" onClick={resetForm}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isUploading}>
-                    {isUploading ? "Uploading..." : (editingId ? 'Update Post' : 'Create Post')}
+                  <Button type="submit" disabled={isUploading || isAvatarUploading}>
+                    {(isUploading || isAvatarUploading) 
+                      ? "Uploading..." 
+                      : (editingId ? 'Update Post' : 'Create Post')}
                   </Button>
                 </div>
               </form>

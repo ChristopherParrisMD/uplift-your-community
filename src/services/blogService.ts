@@ -85,6 +85,38 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
   }
 };
 
+// Upload author avatar image to Supabase Storage
+export const uploadAuthorAvatar = async (file: File): Promise<string | null> => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `avatar-${crypto.randomUUID()}.${fileExt}`;
+    
+    const { data, error } = await supabase
+      .storage
+      .from('blog-images')
+      .upload(`avatars/${fileName}`, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+      
+    if (error) {
+      console.error('Error uploading avatar:', error);
+      return null;
+    }
+    
+    // Get the public URL
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('blog-images')
+      .getPublicUrl(`avatars/${fileName}`);
+    
+    return publicUrl;
+  } catch (error) {
+    console.error('Exception uploading avatar:', error);
+    return null;
+  }
+};
+
 // Get all blog posts
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
   try {
@@ -184,6 +216,11 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
       return null;
     }
     
+    // Set default avatar if not provided
+    if (!post.author_avatar) {
+      post.author_avatar = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80';
+    }
+    
     const { data, error } = await supabase
       .from('posts')
       .insert([{
@@ -260,7 +297,8 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
       return null;
     }
     
-    // Return transformed post
+    // Return transformed post with the updated values from the request
+    // or original values if they weren't updated
     return {
       id: data.id,
       title: data.title,
@@ -268,7 +306,7 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
       content: data.content || '',
       author_name: post.author_name || 'Anonymous',
       author_role: post.author_role || 'Author',
-      author_avatar: post.author_avatar || '',
+      author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
       publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       read_time: `${Math.ceil((data.content?.length || 0) / 1000)} min read`,
       category: post.category || 'Research',
@@ -294,11 +332,16 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
     }
     
     // First get the post to check if it has an image to delete
-    const { data: post } = await supabase
+    const { data: post, error: fetchError } = await supabase
       .from('posts')
       .select('featured_image')
       .eq('id', id)
       .single();
+      
+    if (fetchError) {
+      console.error('Error fetching post for deletion:', fetchError);
+      return false;
+    }
       
     // Delete the post from the database
     const { error } = await supabase
