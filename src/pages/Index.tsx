@@ -25,6 +25,11 @@ const Index = () => {
             <p className="mt-4 text-xl max-w-2xl mx-auto text-mindful-100">
               Taking the first step toward better mental health is a sign of strength, not weakness.
             </p>
+            <div className="mt-8">
+              <Button asChild size="lg" className="bg-white text-mindful-600 hover:bg-mindful-100">
+                <Link to="/resources">Access Crisis Support Resources</Link>
+              </Button>
+            </div>
           </div>
         </section>
       </main>
