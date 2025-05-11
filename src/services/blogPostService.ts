@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
 import { mockBlogPosts } from './mockData';
@@ -229,6 +228,8 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
 // Delete a blog post
 export const deleteBlogPost = async (id: string): Promise<boolean> => {
   try {
+    console.log("Starting deletion of blog post with ID:", id);
+    
     // Check authentication
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -248,8 +249,9 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
       console.error('Error fetching post for deletion:', fetchError);
       // Continue with deletion even if fetching image fails
     }
-      
+    
     // Delete the post from the database
+    console.log("Attempting to delete post from database with ID:", id);
     const { error } = await supabase
       .from('posts')
       .delete()
@@ -260,25 +262,40 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
       return false;
     }
     
+    console.log("Post deleted successfully from database");
+    
     // If post had an image and it's from our storage, delete it from storage
-    if (post?.featured_image && post.featured_image.includes('storage.googleapis.com')) {
+    if (post?.featured_image && post.featured_image.includes('storage')) {
       try {
+        console.log("Post had a featured image:", post.featured_image);
         // Extract the file path from the URL
         const url = new URL(post.featured_image);
         const pathParts = url.pathname.split('/');
-        // Get the last two segments of the path which should be the file path in storage
-        const filePath = pathParts.slice(-2).join('/');
         
-        if (filePath) {
-          const { error: storageError } = await supabase
-            .storage
-            .from('blog-images')
-            .remove([filePath]);
-            
-          if (storageError) {
-            console.error('Error deleting image from storage:', storageError);
-            // Don't fail the post deletion if image deletion fails
+        // The file path will be after the bucket name in the URL
+        // Find the index of blog-images in the path
+        const bucketIndex = pathParts.findIndex(part => part === 'blog-images');
+        if (bucketIndex !== -1 && bucketIndex < pathParts.length - 1) {
+          // Get everything after the bucket name as the file path
+          const filePath = pathParts.slice(bucketIndex + 1).join('/');
+          
+          console.log("Extracted file path:", filePath);
+          
+          if (filePath) {
+            const { error: storageError } = await supabase
+              .storage
+              .from('blog-images')
+              .remove([filePath]);
+              
+            if (storageError) {
+              console.error('Error deleting image from storage:', storageError);
+              // Don't fail the post deletion if image deletion fails
+            } else {
+              console.log("Image deleted successfully from storage");
+            }
           }
+        } else {
+          console.log("Could not find bucket path in URL");
         }
       } catch (imageError) {
         console.error('Error processing image deletion:', imageError);

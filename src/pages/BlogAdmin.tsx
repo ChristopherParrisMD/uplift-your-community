@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
@@ -278,10 +277,12 @@ const BlogAdmin = () => {
   const confirmDelete = async () => {
     if (postToDelete) {
       try {
+        console.log("Confirming deletion of post ID:", postToDelete);
         const success = await deleteBlogPost(postToDelete);
+        
         if (success) {
           toast({ title: "Blog post deleted successfully" });
-          refetch();
+          refetch();  // Refresh the blog posts list
         } else {
           toast({ 
             title: "Error deleting blog post", 
@@ -296,9 +297,10 @@ const BlogAdmin = () => {
           description: "Please try again", 
           variant: "destructive" 
         });
+      } finally {
+        setDeleteDialogOpen(false);
+        setPostToDelete(null);
       }
-      setDeleteDialogOpen(false);
-      setPostToDelete(null);
     }
   };
   
@@ -777,7 +779,10 @@ const BlogAdmin = () => {
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDelete}
+            >
               Delete
             </Button>
           </DialogFooter>
