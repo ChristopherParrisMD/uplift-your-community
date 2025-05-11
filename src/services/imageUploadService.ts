@@ -4,6 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 // Upload an image to Supabase Storage
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
+    if (!file) {
+      console.error('No file provided for upload');
+      return null;
+    }
+    
     const fileExt = file.name.split('.').pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
     const filePath = `${fileName}`;
@@ -37,6 +42,11 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
 // Upload author avatar image to Supabase Storage
 export const uploadAuthorAvatar = async (file: File): Promise<string | null> => {
   try {
+    if (!file) {
+      console.error('No file provided for avatar upload');
+      return null;
+    }
+    
     const fileExt = file.name.split('.').pop();
     const fileName = `avatar-${crypto.randomUUID()}.${fileExt}`;
     

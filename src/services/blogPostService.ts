@@ -94,6 +94,12 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
 // Create a new blog post
 export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>): Promise<BlogPost | null> => {
   try {
+    // Ensure we have required fields
+    if (!post.title || !post.slug) {
+      console.error('Missing required fields for blog post');
+      return null;
+    }
+    
     // Get current user to set as author
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -126,6 +132,7 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
     }
     
     if (!data || data.length === 0) {
+      console.error('No data returned after creating blog post');
       return null;
     }
     
@@ -164,41 +171,54 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
     
     const updateData: any = {};
     
-    if (post.title) updateData.title = post.title;
-    if (post.slug) updateData.slug = post.slug;
-    if (post.content) updateData.content = post.content;
-    if (post.excerpt) updateData.excerpt = post.excerpt;
-    if (post.image_url) updateData.featured_image = post.image_url;
+    // Only add fields that are provided and not undefined
+    if (post.title !== undefined) updateData.title = post.title;
+    if (post.slug !== undefined) updateData.slug = post.slug;
+    if (post.content !== undefined) updateData.content = post.content;
+    if (post.excerpt !== undefined) updateData.excerpt = post.excerpt;
+    if (post.image_url !== undefined) updateData.featured_image = post.image_url;
+    
+    // Always update the timestamp when making changes
     updateData.updated_at = new Date().toISOString();
+    
+    // Don't attempt update if there are no changes
+    if (Object.keys(updateData).length === 0) {
+      console.error('No fields to update');
+      return null;
+    }
     
     const { data, error } = await supabase
       .from('posts')
       .update(updateData)
       .eq('id', id)
-      .select()
-      .single();
+      .select();
       
     if (error) {
       console.error('Error updating blog post:', error);
       return null;
     }
     
+    if (!data || data.length === 0) {
+      console.error('No data returned after updating blog post');
+      return null;
+    }
+    
     // Return transformed post with the updated values from the request
     // or original values if they weren't updated
     return {
-      id: data.id,
-      title: data.title,
-      excerpt: data.excerpt || '',
-      content: data.content || '',
+      id: data[0].id,
+      title: data[0].title,
+      excerpt: data[0].excerpt || '',
+      content: data[0].content || '',
       author_name: post.author_name || 'Anonymous',
       author_role: post.author_role || 'Author',
       author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
-      publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: `${Math.ceil((data.content?.length || 0) / 1000)} min read`,
+      publish_date: data[0].published_at ? new Date(data[0].published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      read_time: `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
       category: post.category || 'Research',
-      image_url: data.featured_image || '',
+      image_url: data[0].featured_image || '',
       featured: post.featured || false,
-      slug: data.slug
+      slug: data[0].slug
     };
   } catch (error) {
     console.error('Exception updating blog post:', error);
@@ -226,7 +246,7 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
       
     if (fetchError) {
       console.error('Error fetching post for deletion:', fetchError);
-      return false;
+      // Continue with deletion even if fetching image fails
     }
       
     // Delete the post from the database
@@ -241,21 +261,27 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
     }
     
     // If post had an image and it's from our storage, delete it from storage
-    if (post?.featured_image && post.featured_image.includes('blog-images')) {
+    if (post?.featured_image && post.featured_image.includes('storage.googleapis.com')) {
       try {
         // Extract the file path from the URL
         const url = new URL(post.featured_image);
         const pathParts = url.pathname.split('/');
-        const fileName = pathParts[pathParts.length - 1];
+        // Get the last two segments of the path which should be the file path in storage
+        const filePath = pathParts.slice(-2).join('/');
         
-        if (fileName) {
-          await supabase
+        if (filePath) {
+          const { error: storageError } = await supabase
             .storage
             .from('blog-images')
-            .remove([fileName]);
+            .remove([filePath]);
+            
+          if (storageError) {
+            console.error('Error deleting image from storage:', storageError);
+            // Don't fail the post deletion if image deletion fails
+          }
         }
       } catch (imageError) {
-        console.error('Error deleting blog image:', imageError);
+        console.error('Error processing image deletion:', imageError);
         // Don't fail the post deletion if image deletion fails
       }
     }
