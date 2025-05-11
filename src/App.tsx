@@ -11,6 +11,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BlogAdmin from "./pages/BlogAdmin";
 import AdminLogin from "./pages/AdminLogin";
+import ResetPassword from "./pages/ResetPassword";
 import Resources from "./pages/Resources";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route 
               path="/blog-admin" 
               element={
