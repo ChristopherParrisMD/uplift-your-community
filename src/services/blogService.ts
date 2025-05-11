@@ -1,7 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
-import { v4 as uuidv4 } from 'uuid';
 
 // Default mock data for fallback
 const mockBlogPosts: BlogPost[] = [
@@ -56,7 +55,8 @@ const mockBlogPosts: BlogPost[] = [
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${uuidv4()}.${fileExt}`;
+    // Use crypto.randomUUID() instead of uuid package
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
     const filePath = `${fileName}`;
     
     const { data, error } = await supabase
