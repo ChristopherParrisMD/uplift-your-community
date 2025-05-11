@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   getBlogPosts, 
   createBlogPost, 
@@ -50,6 +50,7 @@ const BlogAdmin = () => {
   
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   
   const {
     data: blogPosts = [],
@@ -222,13 +223,31 @@ const BlogAdmin = () => {
         author_avatar: avatarUrl 
       };
 
+      console.log("Form submission data:", updatedFormData);
+      
+      let result;
       if (editingId) {
-        await updateBlogPost(editingId, updatedFormData);
-        toast({ title: "Blog post updated successfully" });
+        console.log("Updating post with ID:", editingId);
+        result = await updateBlogPost(editingId, updatedFormData);
+        if (result) {
+          toast({ title: "Blog post updated successfully" });
+          // Invalidate both queries to ensure data is refreshed
+          queryClient.invalidateQueries({ queryKey: ['adminBlogPosts'] });
+          queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
+        } else {
+          toast({ 
+            title: "Error updating blog post", 
+            description: "Please try again or check console for details", 
+            variant: "destructive" 
+          });
+        }
       } else {
-        const result = await createBlogPost({ ...updatedFormData as Omit<BlogPost, 'id' | 'created_at'> });
+        result = await createBlogPost({ ...updatedFormData as Omit<BlogPost, 'id' | 'created_at'> });
         if (result) {
           toast({ title: "Blog post created successfully" });
+          // Invalidate both queries to ensure data is refreshed
+          queryClient.invalidateQueries({ queryKey: ['adminBlogPosts'] });
+          queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
         } else {
           toast({ 
             title: "Error creating blog post", 
@@ -239,6 +258,7 @@ const BlogAdmin = () => {
       }
       
       resetForm();
+      // Force a refetch after the operation is complete
       refetch();
     } catch (error) {
       console.error("Form submission error:", error);
