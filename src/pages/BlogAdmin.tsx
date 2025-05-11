@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost } from "@/services/blogService";
+import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost, uploadBlogImage } from "@/services/blogService";
 import { BlogPost } from "@/types/blog";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
@@ -10,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Edit, Trash2, Plus, LogOut } from "lucide-react";
+import { Edit, Trash2, Plus, LogOut, Upload, Image, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -33,6 +34,9 @@ const BlogAdmin = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -63,6 +67,46 @@ const BlogAdmin = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Clear selected file if user enters a URL manually
+    if (e.target.value && selectedFile) {
+      setSelectedFile(null);
+    }
+    handleInputChange(e);
+  };
+  
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({ 
+        title: "Invalid file type", 
+        description: "Please upload a JPG, PNG, GIF, or WebP image", 
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ 
+        title: "File too large", 
+        description: "Image must be smaller than 5MB", 
+        variant: "destructive" 
+      });
+      return;
+    }
+    
+    setSelectedFile(file);
+    
+    // Create a preview URL
+    const imageUrl = URL.createObjectURL(file);
+    setFormData(prev => ({ ...prev, image_url: imageUrl }));
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -75,12 +119,33 @@ const BlogAdmin = () => {
         });
         return;
       }
+      
+      // First upload the image if a file was selected
+      let imageUrl = formData.image_url;
+      
+      if (selectedFile) {
+        setIsUploading(true);
+        const uploadedUrl = await uploadBlogImage(selectedFile);
+        setIsUploading(false);
+        
+        if (!uploadedUrl) {
+          toast({ 
+            title: "Image upload failed", 
+            description: "Please try again or use an external image URL", 
+            variant: "destructive" 
+          });
+          return;
+        }
+        
+        imageUrl = uploadedUrl;
+        setFormData(prev => ({ ...prev, image_url: uploadedUrl }));
+      }
 
       if (editingId) {
-        await updateBlogPost(editingId, formData);
+        await updateBlogPost(editingId, { ...formData, image_url: imageUrl });
         toast({ title: "Blog post updated successfully" });
       } else {
-        const result = await createBlogPost(formData as Omit<BlogPost, 'id' | 'created_at'>);
+        const result = await createBlogPost({ ...formData as Omit<BlogPost, 'id' | 'created_at'>, image_url: imageUrl || '' });
         if (result) {
           toast({ title: "Blog post created successfully" });
         } else {
@@ -120,6 +185,7 @@ const BlogAdmin = () => {
     });
     setEditingId(post.id);
     setIsEditing(true);
+    setSelectedFile(null);
     window.scrollTo(0, 0);
   };
   
@@ -166,6 +232,12 @@ const BlogAdmin = () => {
     });
     setEditingId(null);
     setIsEditing(false);
+    setSelectedFile(null);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
   
   const handleSignOut = async () => {
@@ -185,6 +257,15 @@ const BlogAdmin = () => {
       }));
     }
   }, [user, formData.author_name]);
+  
+  // Function to clear selected image
+  const clearSelectedImage = () => {
+    setSelectedFile(null);
+    setFormData(prev => ({ ...prev, image_url: '' }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -283,15 +364,80 @@ const BlogAdmin = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="image_url">Image URL</Label>
-                      <Input 
-                        id="image_url"
-                        name="image_url"
-                        value={formData.image_url}
-                        onChange={handleInputChange}
-                        required
-                      />
+                    <div className="space-y-2">
+                      <Label>Featured Image</Label>
+                      
+                      {/* Image preview area */}
+                      {formData.image_url && (
+                        <div className="relative w-full h-40 mb-2">
+                          <img 
+                            src={formData.image_url} 
+                            alt="Featured image preview" 
+                            className="w-full h-full object-cover rounded-md"
+                            onError={(e) => {
+                              // If image fails to load, show a placeholder
+                              const target = e.target as HTMLImageElement;
+                              target.src = "https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80";
+                            }}
+                          />
+                          <Button 
+                            type="button"
+                            variant="destructive" 
+                            size="icon" 
+                            className="absolute top-2 right-2 h-8 w-8"
+                            onClick={clearSelectedImage}
+                          >
+                            <X size={16} />
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {/* Image upload and URL input */}
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label htmlFor="image_upload" className="mb-1 block">Upload Image</Label>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              type="button"
+                              variant="outline"
+                              className="flex items-center gap-2"
+                              onClick={() => fileInputRef.current?.click()}
+                              disabled={isUploading}
+                            >
+                              {isUploading ? "Uploading..." : "Choose File"}
+                              <Upload size={16} />
+                            </Button>
+                            {selectedFile && (
+                              <span className="text-sm text-gray-600 truncate max-w-[200px]">
+                                {selectedFile.name}
+                              </span>
+                            )}
+                          </div>
+                          <input 
+                            ref={fileInputRef}
+                            id="image_upload"
+                            type="file" 
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFileChange}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="image_url" className="flex items-center gap-1">
+                            <span>Or use image URL</span>
+                            {selectedFile && <span className="text-xs text-gray-500">(will override uploaded file)</span>}
+                          </Label>
+                          <Input 
+                            id="image_url"
+                            name="image_url"
+                            value={selectedFile ? "" : formData.image_url || ""}
+                            onChange={handleImageUrlChange}
+                            placeholder="https://example.com/image.jpg"
+                            disabled={!!selectedFile}
+                          />
+                        </div>
+                      </div>
                     </div>
                     
                     <div>
@@ -372,8 +518,8 @@ const BlogAdmin = () => {
                   <Button type="button" variant="outline" onClick={resetForm}>
                     Cancel
                   </Button>
-                  <Button type="submit">
-                    {editingId ? 'Update Post' : 'Create Post'}
+                  <Button type="submit" disabled={isUploading}>
+                    {isUploading ? "Uploading..." : (editingId ? 'Update Post' : 'Create Post')}
                   </Button>
                 </div>
               </form>

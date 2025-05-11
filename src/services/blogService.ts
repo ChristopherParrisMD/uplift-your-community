@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
+import { v4 as uuidv4 } from 'uuid';
 
 // Default mock data for fallback
 const mockBlogPosts: BlogPost[] = [
@@ -50,6 +51,39 @@ const mockBlogPosts: BlogPost[] = [
     slug: "building-meaningful-connections-in-a-digital-age"
   }
 ];
+
+// Upload an image to Supabase Storage
+export const uploadBlogImage = async (file: File): Promise<string | null> => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${uuidv4()}.${fileExt}`;
+    const filePath = `${fileName}`;
+    
+    const { data, error } = await supabase
+      .storage
+      .from('blog-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+      
+    if (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+    
+    // Get the public URL
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('blog-images')
+      .getPublicUrl(filePath);
+    
+    return publicUrl;
+  } catch (error) {
+    console.error('Exception uploading image:', error);
+    return null;
+  }
+};
 
 // Get all blog posts
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
@@ -259,6 +293,14 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
       return false;
     }
     
+    // First get the post to check if it has an image to delete
+    const { data: post } = await supabase
+      .from('posts')
+      .select('featured_image')
+      .eq('id', id)
+      .single();
+      
+    // Delete the post from the database
     const { error } = await supabase
       .from('posts')
       .delete()
@@ -267,6 +309,26 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
     if (error) {
       console.error('Error deleting blog post:', error);
       return false;
+    }
+    
+    // If post had an image and it's from our storage, delete it from storage
+    if (post?.featured_image && post.featured_image.includes('blog-images')) {
+      try {
+        // Extract the file path from the URL
+        const url = new URL(post.featured_image);
+        const pathParts = url.pathname.split('/');
+        const fileName = pathParts[pathParts.length - 1];
+        
+        if (fileName) {
+          await supabase
+            .storage
+            .from('blog-images')
+            .remove([fileName]);
+        }
+      } catch (imageError) {
+        console.error('Error deleting blog image:', imageError);
+        // Don't fail the post deletion if image deletion fails
+      }
     }
     
     return true;
