@@ -3,8 +3,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-// This is a utility page used to update the password for a specific user
+// This is a utility page used to update the password for the main admin user
 // It will not be linked in the navigation, only used for direct access when needed
 
 const UpdatePassword = () => {
@@ -13,55 +17,77 @@ const UpdatePassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const updateUserPassword = async () => {
+    const updateAdminPassword = async () => {
       setLoading(true);
-      setMessage('Updating password...');
+      setMessage('Updating password for christopher@myinsightally.com...');
 
       try {
-        // Update the password for the specified user
-        const { data, error } = await supabase.auth.admin.updateUserById(
-          '9801f334-4597-4aad-b1cc-74b1ab3a3154', // This would be a variable in a real implementation
-          { password: '168759Cp!@' }
+        // Use the admin email directly for password reset
+        const { error } = await supabase.auth.resetPasswordForEmail(
+          'christopher@myinsightally.com',
+          { redirectTo: `${window.location.origin}/reset-password` }
         );
         
         if (error) {
-          console.error('Error updating password:', error);
-          setMessage('Error: Could not update password. This page requires direct admin API access which is not available in client-side code.');
+          console.error('Error initiating password reset:', error);
+          setMessage(`Error: ${error.message}. Please try the "Forgot password" option on the login page instead.`);
         } else {
-          setMessage('Password updated successfully for christopher@myinsightally.com!');
-          setTimeout(() => {
-            navigate('/');
-          }, 3000);
+          setMessage('Password reset email sent to christopher@myinsightally.com! Please check your email inbox and follow the link to reset your password.');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Unhandled error:', error);
-        setMessage('An unexpected error occurred. Admin API access is required for this operation.');
+        setMessage(`An unexpected error occurred: ${error.message}`);
       } finally {
         setLoading(false);
       }
     };
 
-    updateUserPassword();
+    updateAdminPassword();
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-md">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Update Password</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {loading ? 'Processing...' : message}
-          </p>
-          {!loading && (
-            <button
-              onClick={() => navigate('/admin-login')}
-              className="mt-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Go to Login
-            </button>
-          )}
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <NavBar />
+      <main className="flex-grow flex items-center justify-center py-16 px-4 bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold">Admin Password Reset</CardTitle>
+            <CardDescription>
+              Resetting password for christopher@myinsightally.com
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center py-4">
+              {loading ? (
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div>
+                  <p className="text-gray-600">{message}</p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-600 mb-4">{message}</p>
+                  <div className="space-y-4">
+                    <Button
+                      onClick={() => navigate('/admin-login')}
+                      className="w-full"
+                    >
+                      Go to Login
+                    </Button>
+                    <Button
+                      onClick={() => window.location.reload()}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Try Again
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+      <Footer />
     </div>
   );
 };
