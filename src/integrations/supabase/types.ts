@@ -80,40 +80,55 @@ export type Database = {
       }
       posts: {
         Row: {
+          author_avatar: string | null
           author_id: string | null
+          author_name: string | null
+          author_role: string | null
           category: string | null
           content: string | null
           created_at: string | null
           excerpt: string | null
+          featured: boolean | null
           featured_image: string | null
           id: string
           published_at: string | null
+          read_time: string | null
           slug: string
           title: string
           updated_at: string | null
         }
         Insert: {
+          author_avatar?: string | null
           author_id?: string | null
+          author_name?: string | null
+          author_role?: string | null
           category?: string | null
           content?: string | null
           created_at?: string | null
           excerpt?: string | null
+          featured?: boolean | null
           featured_image?: string | null
           id?: string
           published_at?: string | null
+          read_time?: string | null
           slug: string
           title: string
           updated_at?: string | null
         }
         Update: {
+          author_avatar?: string | null
           author_id?: string | null
+          author_name?: string | null
+          author_role?: string | null
           category?: string | null
           content?: string | null
           created_at?: string | null
           excerpt?: string | null
+          featured?: boolean | null
           featured_image?: string | null
           id?: string
           published_at?: string | null
+          read_time?: string | null
           slug?: string
           title?: string
           updated_at?: string | null

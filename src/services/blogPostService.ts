@@ -15,7 +15,13 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
         excerpt,
         featured_image,
         published_at,
-        author_id
+        author_id,
+        author_name,
+        author_role,
+        author_avatar,
+        read_time,
+        category,
+        featured
       `)
       .order('published_at', { ascending: false });
       
@@ -30,14 +36,14 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
       title: post.title,
       excerpt: post.excerpt || '',
       content: post.content || '',
-      author_name: 'Anonymous', // Default values since we don't have author table yet
-      author_role: 'Author',
-      author_avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      author_name: post.author_name || 'Anonymous',
+      author_role: post.author_role || 'Author',
+      author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
       publish_date: post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: `${Math.ceil((post.content?.length || 0) / 1000)} min read`,
-      category: 'Research', // Default category - we'll update this in the future
+      read_time: post.read_time || `${Math.ceil((post.content?.length || 0) / 1000)} min read`,
+      category: post.category || 'Research',
       image_url: post.featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      featured: false,
+      featured: post.featured || false,
       slug: post.slug
     }));
     
@@ -70,14 +76,14 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       title: data.title,
       excerpt: data.excerpt || '',
       content: data.content || '',
-      author_name: 'Anonymous', // Default values until we implement author table
-      author_role: 'Author',
-      author_avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      author_name: data.author_name || 'Anonymous',
+      author_role: data.author_role || 'Author',
+      author_avatar: data.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
       publish_date: data.published_at ? new Date(data.published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: `${Math.ceil((data.content?.length || 0) / 1000)} min read`,
-      category: 'Research', // Default category
+      read_time: data.read_time || `${Math.ceil((data.content?.length || 0) / 1000)} min read`,
+      category: data.category || 'Research',
       image_url: data.featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      featured: false,
+      featured: data.featured || false,
       slug: data.slug
     };
     
@@ -121,7 +127,13 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
         excerpt: post.excerpt,
         featured_image: post.image_url,
         published_at: new Date().toISOString(),
-        author_id: user.id
+        author_id: user.id,
+        author_name: post.author_name,
+        author_role: post.author_role,
+        author_avatar: post.author_avatar,
+        read_time: post.read_time,
+        category: post.category,
+        featured: post.featured || false
       }])
       .select();
       
@@ -141,14 +153,14 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>):
       title: data[0].title,
       excerpt: data[0].excerpt || '',
       content: data[0].content || '',
-      author_name: post.author_name,
-      author_role: post.author_role,
-      author_avatar: post.author_avatar,
+      author_name: data[0].author_name || post.author_name,
+      author_role: data[0].author_role || post.author_role,
+      author_avatar: data[0].author_avatar || post.author_avatar,
       publish_date: data[0].published_at ? new Date(data[0].published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
-      category: post.category,
-      image_url: data[0].featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      featured: post.featured || false,
+      read_time: data[0].read_time || post.read_time,
+      category: data[0].category || post.category,
+      image_url: data[0].featured_image || post.image_url,
+      featured: data[0].featured || post.featured || false,
       slug: data[0].slug
     };
   } catch (error) {
@@ -179,6 +191,11 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
     if (post.excerpt !== undefined) updateData.excerpt = post.excerpt;
     if (post.image_url !== undefined) updateData.featured_image = post.image_url;
     if (post.category !== undefined) updateData.category = post.category;
+    if (post.author_name !== undefined) updateData.author_name = post.author_name;
+    if (post.author_role !== undefined) updateData.author_role = post.author_role;
+    if (post.author_avatar !== undefined) updateData.author_avatar = post.author_avatar;
+    if (post.read_time !== undefined) updateData.read_time = post.read_time;
+    if (post.featured !== undefined) updateData.featured = post.featured;
     
     // Always update the timestamp when making changes
     updateData.updated_at = new Date().toISOString();
@@ -209,35 +226,20 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
     
     console.log("Post updated successfully. Response data:", data);
     
-    // First fetch the complete post to get all original values
-    const { data: originalPost, error: fetchError } = await supabase
-      .from('posts')
-      .select('*')
-      .eq('id', id)
-      .single();
-      
-    if (fetchError) {
-      console.error('Error fetching original post data:', fetchError);
-      // Continue with the data we have from the update
-    }
-    
-    // Return transformed post with the updated values from the request
-    // or original values if they weren't updated
+    // Return transformed post with the updated values
     return {
       id: data[0].id,
       title: data[0].title,
       excerpt: data[0].excerpt || '',
       content: data[0].content || '',
-      // Use the post values if provided, otherwise use default values
-      // We can't rely on originalPost having author fields since they're not in the database
-      author_name: post.author_name || 'Anonymous',
-      author_role: post.author_role || 'Author',
-      author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      author_name: data[0].author_name || 'Anonymous',
+      author_role: data[0].author_role || 'Author',
+      author_avatar: data[0].author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
       publish_date: data[0].published_at ? new Date(data[0].published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      read_time: post.read_time || `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
-      category: data[0].category || 'Research', // Use the updated category from database
+      read_time: data[0].read_time || `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
+      category: data[0].category || 'Research',
       image_url: data[0].featured_image || 'https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      featured: post.featured || false,
+      featured: data[0].featured || false,
       slug: data[0].slug
     };
   } catch (error) {
