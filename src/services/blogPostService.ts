@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
 import { mockBlogPosts } from './mockData';
@@ -222,7 +221,7 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
       author_avatar: post.author_avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
       publish_date: data[0].published_at ? new Date(data[0].published_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       read_time: post.read_time || `${Math.ceil((data[0].content?.length || 0) / 1000)} min read`,
-      category: post.category || data[0].category || 'Research',
+      category: post.category || data[0]?.category || 'Research',
       image_url: data[0].featured_image || '',
       featured: post.featured || false,
       slug: data[0].slug
