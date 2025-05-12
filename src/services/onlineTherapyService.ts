@@ -6,61 +6,6 @@ const API_KEY = "96026dea5d04541d19ecc08a2ed28c4a78da950cbb47653ed5eea66a6afbdde
 const NETWORK_ID = "onlinetherapy";
 const BASE_URL = "https://api.online-therapy.com/v1";
 
-// Mock data to use as fallback when API is unavailable or in development
-const MOCK_PROVIDERS: OnlineTherapist[] = [
-  {
-    id: "p1",
-    name: "Dr. Sarah Johnson",
-    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=800&auto=format",
-    specialty: "Anxiety & Depression",
-    location: "New York, NY",
-    rating: 4.9,
-    reviews: 128,
-    coordinates: [40.7128, -74.0060] as [number, number],
-    credentials: "Ph.D., Licensed Psychologist",
-    languages: ["English", "Spanish"],
-    gender: "Female",
-    availability: "Weekdays, Evenings",
-    acceptingNewClients: true,
-    insurance: "Blue Cross, Aetna, Cigna",
-    sessionTypes: ["Video", "Chat"]
-  },
-  {
-    id: "p2",
-    name: "Dr. Michael Chen",
-    image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=800&auto=format",
-    specialty: "Trauma & PTSD",
-    location: "Los Angeles, CA",
-    rating: 4.8,
-    reviews: 94,
-    coordinates: [34.0522, -118.2437] as [number, number],
-    credentials: "Psy.D., Licensed Clinical Psychologist",
-    languages: ["English", "Mandarin"],
-    gender: "Male",
-    availability: "Evenings, Weekends",
-    acceptingNewClients: true,
-    insurance: "Blue Shield, United, Medicare",
-    sessionTypes: ["Video", "Phone"]
-  },
-  {
-    id: "p3",
-    name: "Taylor Williams",
-    image: "https://images.unsplash.com/photo-1573497019236-61f12e4558b9?q=80&w=800&auto=format",
-    specialty: "Relationship Issues",
-    location: "Chicago, IL",
-    rating: 4.7,
-    reviews: 76,
-    coordinates: [41.8781, -87.6298] as [number, number],
-    credentials: "LMFT, Licensed Marriage & Family Therapist",
-    languages: ["English"],
-    gender: "Non-binary",
-    availability: "Weekdays, Weekends",
-    acceptingNewClients: true,
-    insurance: "Aetna, Cigna, Magellan",
-    sessionTypes: ["Video", "Chat", "Phone"]
-  }
-];
-
 export interface OnlineTherapist {
   id: string;
   name: string;
@@ -100,9 +45,6 @@ interface ProviderContactParams {
   providerId: string;
 }
 
-// Environment detection for development vs production
-const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
-
 export async function searchProviders(params: {
   location?: string;
   specialty?: string;
@@ -125,32 +67,8 @@ export async function searchProviders(params: {
     if (params.specialty && params.specialty !== 'any') queryParams.append('specialty', params.specialty);
     if (params.insurance && params.insurance !== 'any') queryParams.append('insurance', params.insurance);
     if (params.sortBy) queryParams.append('sortBy', params.sortBy);
-
-    // Use development mode and mock data if in development or API is unavailable
-    if (isDevelopment) {
-      console.log('Using mock data in development mode');
-      
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Filter mock data based on parameters for more realistic results
-      let filteredProviders = [...MOCK_PROVIDERS];
-      
-      if (params.specialty && params.specialty !== 'any') {
-        filteredProviders = filteredProviders.filter(provider => 
-          provider.specialty.toLowerCase().includes(params.specialty!.toLowerCase()));
-      }
-      
-      if (params.insurance && params.insurance !== 'any') {
-        filteredProviders = filteredProviders.filter(provider => 
-          provider.insurance && provider.insurance.includes(params.insurance!));
-      }
-      
-      // Return filtered mock data
-      return filteredProviders;
-    }
     
-    // Make the actual API request when not in development mode
+    // Make the actual API request
     const apiUrl = `${BASE_URL}/providers/search?${queryParams.toString()}`;
     console.log('Calling API at:', apiUrl);
     
@@ -173,7 +91,7 @@ export async function searchProviders(params: {
     // Handle different API response formats
     const providers = Array.isArray(data) ? data : (data.providers || []);
     
-    // Extended data processing - enhance provider data and ensure coordinates are tuples
+    // Extended data processing - ensure coordinates are tuples
     const enhancedProviders: OnlineTherapist[] = providers.map((provider: any) => {
       // Ensure coordinates are always a tuple of [number, number]
       const coordinates: [number, number] = Array.isArray(provider.coordinates) && provider.coordinates.length >= 2 
@@ -183,9 +101,9 @@ export async function searchProviders(params: {
       return {
         ...provider,
         coordinates,
-        acceptingNewClients: provider.acceptingNewClients ?? Math.random() > 0.3,
-        availability: provider.availability || ["Weekdays", "Evenings", "Weekends"][Math.floor(Math.random() * 3)],
-        insurance: provider.insurance || "Multiple plans accepted"
+        acceptingNewClients: provider.acceptingNewClients ?? true,
+        availability: provider.availability || "Contact for availability",
+        insurance: provider.insurance || "Contact for insurance details"
       };
     });
     
@@ -200,12 +118,6 @@ export async function searchProviders(params: {
       variant: "destructive"
     });
     
-    // In case of API failure, use mock data as fallback but show the error
-    if (isDevelopment) {
-      console.log('Falling back to mock data after API error');
-      return MOCK_PROVIDERS;
-    }
-    
     return [];
   }
 }
@@ -216,25 +128,7 @@ export async function getLocationSuggestions(query: string): Promise<string[]> {
     
     console.log('Fetching location suggestions for:', query);
     
-    // In development mode, return mock suggestions
-    if (isDevelopment) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const mockLocations = [
-        "New York, NY",
-        "Los Angeles, CA",
-        "Chicago, IL",
-        "Houston, TX",
-        "Phoenix, AZ",
-        "Philadelphia, PA"
-      ];
-      
-      return mockLocations.filter(loc => 
-        loc.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 5);
-    }
-    
-    // Make real API request for production
+    // Make real API request
     const queryParams = new URLSearchParams({
       apiKey: API_KEY,
       networkId: NETWORK_ID,
@@ -259,19 +153,7 @@ export async function createAccount(params: AccountCreationParams): Promise<void
   try {
     console.log('Creating account for:', params.email);
     
-    if (isDevelopment) {
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Track the signup event for analytics
-      trackEvent('account_created', {
-        email: params.email
-      });
-      
-      return;
-    }
-    
-    // Real API implementation for production
+    // Real API implementation
     const response = await fetch(`${BASE_URL}/accounts/create`, {
       method: 'POST',
       headers: {
@@ -307,20 +189,7 @@ export async function initiateProviderContact(params: ProviderContactParams): Pr
   try {
     console.log('Initiating contact with provider:', params.providerId, 'for user:', params.email);
     
-    if (isDevelopment) {
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Track the provider contact event for analytics
-      trackEvent('provider_contact_initiated', {
-        providerId: params.providerId,
-        email: params.email
-      });
-      
-      return;
-    }
-    
-    // Real API implementation for production
+    // Real API implementation
     const response = await fetch(`${BASE_URL}/providers/${params.providerId}/contact`, {
       method: 'POST',
       headers: {
