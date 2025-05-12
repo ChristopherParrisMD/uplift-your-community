@@ -99,17 +99,21 @@ export const useOnlineProviderSearch = ({ defaultMapCenter = [42.3314, -83.0458]
         
         toast({
           title: "Search Complete",
-          description: `Found ${data.length} providers matching your criteria.`
+          description: `Found ${data.length} providers matching your criteria.`,
+          variant: "default"
         });
+
+        // Set showMap based on the platform
+        if (window.innerWidth >= 768) {
+          setShowMap(true);
+        } else {
+          setShowMap(false);
+        }
       }
     } catch (err: any) {
       console.error("Search error:", err);
       setError(err.message || "An error occurred while searching. Please try again.");
-      toast({
-        title: "Search Error",
-        description: err.message || "An error occurred while searching. Please try again.",
-        variant: "destructive"
-      });
+      // Error toasts are now handled in the service layer
       setProviders([]);
     } finally {
       setLoading(false);
