@@ -25,6 +25,23 @@ export interface OnlineTherapist {
     state: string;
     zip: string;
   };
+  // New extended fields
+  availability?: string;
+  acceptingNewClients?: boolean;
+  insurance?: string;
+  sessionTypes?: string[];
+}
+
+interface AccountCreationParams {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+interface ProviderContactParams {
+  email: string;
+  providerId: string;
 }
 
 export async function searchProviders(params: {
@@ -55,7 +72,19 @@ export async function searchProviders(params: {
     }
     
     const data = await response.json();
-    return data.providers || [];
+    
+    // Extended data processing - enhance provider data
+    const enhancedProviders = (data.providers || []).map((provider: OnlineTherapist) => {
+      // Add any additional processing here, like default availability data
+      return {
+        ...provider,
+        acceptingNewClients: Math.random() > 0.3, // Simulated data
+        availability: ["Weekdays", "Evenings", "Weekends"][Math.floor(Math.random() * 3)], // Simulated data
+        insurance: provider.insurance || "Multiple plans accepted"
+      };
+    });
+    
+    return enhancedProviders;
   } catch (error: any) {
     console.error('Error fetching providers:', error);
     toast({
@@ -89,4 +118,98 @@ export async function getLocationSuggestions(query: string): Promise<string[]> {
     console.error('Error fetching location suggestions:', error);
     return [];
   }
+}
+
+export async function createAccount(params: AccountCreationParams): Promise<void> {
+  try {
+    console.log('Creating account for:', params.email);
+    
+    // This is a simulated API call - in a real app this would send data to the API
+    // For demonstration purposes, we'll simulate a successful account creation
+    
+    // Uncomment and modify this for actual API integration
+    /* 
+    const response = await fetch(`${BASE_URL}/accounts/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': API_KEY
+      },
+      body: JSON.stringify({
+        email: params.email,
+        password: params.password,
+        firstName: params.firstName,
+        lastName: params.lastName,
+        networkId: NETWORK_ID
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create account');
+    }
+    */
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Track the signup event for analytics
+    trackEvent('account_created', {
+      email: params.email
+    });
+    
+    return;
+  } catch (error: any) {
+    console.error('Error creating account:', error);
+    throw new Error(error.message || 'Failed to create account. Please try again.');
+  }
+}
+
+export async function initiateProviderContact(params: ProviderContactParams): Promise<void> {
+  try {
+    console.log('Initiating contact with provider:', params.providerId, 'for user:', params.email);
+    
+    // This is a simulated API call
+    // For demonstration purposes, we'll simulate a successful provider contact
+    
+    // Uncomment and modify this for actual API integration
+    /*
+    const response = await fetch(`${BASE_URL}/providers/${params.providerId}/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': API_KEY
+      },
+      body: JSON.stringify({
+        email: params.email,
+        networkId: NETWORK_ID
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to contact provider');
+    }
+    */
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Track the provider contact event for analytics
+    trackEvent('provider_contact_initiated', {
+      providerId: params.providerId,
+      email: params.email
+    });
+    
+    return;
+  } catch (error: any) {
+    console.error('Error contacting provider:', error);
+    throw new Error(error.message || 'Failed to contact provider. Please try again.');
+  }
+}
+
+// Simple analytics tracking function
+function trackEvent(eventName: string, eventData: Record<string, any>): void {
+  console.log(`[ANALYTICS] Event: ${eventName}`, eventData);
+  // In a real app, this would send data to an analytics service
 }

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { Star } from "lucide-react";
+import { Star, MapPin, Phone, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OnlineTherapist } from "@/services/onlineTherapyService";
 
@@ -27,22 +27,62 @@ const ProviderMap: React.FC<ProviderMapProps> = ({ providers, mapCenter }) => {
             key={provider.id}
             position={provider.coordinates as [number, number]}
           >
-            <Popup>
-              <div className="p-2">
-                <h4 className="font-bold">{provider.name}</h4>
-                <p className="text-sm text-gray-600">{provider.specialty}</p>
-                <p className="text-sm text-gray-500">{provider.location}</p>
-                <div className="mt-2 flex items-center text-sm">
-                  <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                  <span>{provider.rating} ({provider.reviews} reviews)</span>
+            <Popup className="provider-popup">
+              <div className="p-2 min-w-[220px]">
+                <div className="flex items-center gap-3 mb-2">
+                  <img 
+                    src={provider.image} 
+                    alt={provider.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://via.placeholder.com/150?text=Provider";
+                    }}
+                  />
+                  <div>
+                    <h4 className="font-bold text-sm">{provider.name}</h4>
+                    <p className="text-xs text-gray-600">{provider.specialty}</p>
+                  </div>
                 </div>
-                <Button
-                  size="sm"
-                  className="mt-2 w-full"
-                  asChild
-                >
-                  <a href={`https://online-therapy.com/provider/${provider.id}`} target="_blank" rel="noopener noreferrer">View Profile</a>
-                </Button>
+                
+                <div className="mb-2 text-xs">
+                  <div className="flex items-center mb-1">
+                    <MapPin className="h-3 w-3 mr-1 text-gray-500" />
+                    <span className="text-gray-500">{provider.location}</span>
+                  </div>
+                  
+                  {provider.phone && (
+                    <div className="flex items-center mb-1">
+                      <Phone className="h-3 w-3 mr-1 text-gray-500" />
+                      <span className="text-gray-500">{provider.phone}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center">
+                    <Star className="h-3 w-3 text-yellow-500 mr-1" />
+                    <span>{provider.rating} ({provider.reviews} reviews)</span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs h-8"
+                    onClick={() => window.open(`https://online-therapy.com/provider/${provider.id}`, '_blank')}
+                  >
+                    View Profile
+                    <ExternalLink className="ml-1 h-3 w-3" />
+                  </Button>
+                  
+                  <Button
+                    size="sm"
+                    className="w-full text-xs h-8 bg-mindful-600 hover:bg-mindful-700"
+                    onClick={() => window.open(`https://online-therapy.com/connect/${provider.id}`, '_blank')}
+                  >
+                    Connect Now
+                  </Button>
+                </div>
               </div>
             </Popup>
           </Marker>

@@ -8,6 +8,8 @@ import LocationSearch from "@/components/therapist/LocationSearch";
 import SearchResults from "@/components/provider/ProviderSearchResults";
 import { useOnlineProviderSearch } from "@/hooks/useOnlineProviderSearch";
 import { specialties, insuranceOptions, sortOptions } from "@/constants/therapistSearch";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 // Fix for default marker icons in Leaflet with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -38,6 +40,35 @@ const OnlineProviderSearch = () => {
     setLocationAndSearch
   } = useOnlineProviderSearch();
 
+  const [activeFilters, setActiveFilters] = useState<{
+    specialty: string | null;
+    insurance: string | null;
+  }>({
+    specialty: null,
+    insurance: null
+  });
+
+  const hasActiveFilters = activeFilters.specialty || activeFilters.insurance;
+  
+  const handleApplyFilters = () => {
+    setActiveFilters({
+      specialty: specialty !== 'any' ? specialty : null,
+      insurance: insurance !== 'any' ? insurance : null
+    });
+    handleSearch();
+  };
+  
+  const clearFilter = (filterType: 'specialty' | 'insurance') => {
+    if (filterType === 'specialty') {
+      setSpecialty('any');
+      setActiveFilters(prev => ({ ...prev, specialty: null }));
+    } else {
+      setInsurance('any');
+      setActiveFilters(prev => ({ ...prev, insurance: null }));
+    }
+    handleSearch();
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <h2 className="text-2xl font-bold mb-6">Find an Online Therapy Provider</h2>
@@ -57,6 +88,36 @@ const OnlineProviderSearch = () => {
             suggestions={suggestions}
             setLocationAndSearch={setLocationAndSearch}
           />
+          
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2 items-center mt-4">
+              <span className="text-sm text-gray-500">Active filters:</span>
+              
+              {activeFilters.specialty && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  Specialty: {activeFilters.specialty}
+                  <button 
+                    onClick={() => clearFilter('specialty')} 
+                    className="ml-1 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+              
+              {activeFilters.insurance && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  Insurance: {activeFilters.insurance}
+                  <button 
+                    onClick={() => clearFilter('insurance')} 
+                    className="ml-1 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="filters">
@@ -74,7 +135,7 @@ const OnlineProviderSearch = () => {
 
           <button 
             className="bg-mindful-600 hover:bg-mindful-700 text-white px-4 py-2 rounded-md flex items-center mt-6" 
-            onClick={handleSearch}
+            onClick={handleApplyFilters}
             disabled={loading}
           >
             {loading ? (
