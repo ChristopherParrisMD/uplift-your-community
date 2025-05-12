@@ -18,6 +18,7 @@ export const useOnlineProviderSearch = ({ defaultMapCenter = [42.3314, -83.0458]
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>(defaultMapCenter);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   // Get user's location
   useEffect(() => {
@@ -62,6 +63,7 @@ export const useOnlineProviderSearch = ({ defaultMapCenter = [42.3314, -83.0458]
     setLoading(true);
     setError("");
     setProviders([]);
+    setSearchPerformed(true);
 
     try {
       console.log('Searching with params:', { 
@@ -119,7 +121,11 @@ export const useOnlineProviderSearch = ({ defaultMapCenter = [42.3314, -83.0458]
   const setLocationAndSearch = (location: string) => {
     setSearchLocation(location);
     setSuggestions([]);
-    handleSearch();
+    
+    // Set the location first, then search in the next event loop
+    setTimeout(() => {
+      handleSearch();
+    }, 0);
   };
 
   return {
@@ -133,6 +139,7 @@ export const useOnlineProviderSearch = ({ defaultMapCenter = [42.3314, -83.0458]
     suggestions,
     showMap,
     mapCenter,
+    searchPerformed,
     setSpecialty,
     setInsurance,
     setSortBy,

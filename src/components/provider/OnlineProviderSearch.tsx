@@ -159,18 +159,13 @@ const OnlineProviderSearch = () => {
         </TabsContent>
       </Tabs>
       
-      {error && (
-        <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md">
-          {error}
-        </div>
-      )}
-      
       <SearchResults 
         providers={providers}
         showMap={showMap}
         toggleMapView={toggleMapView}
         mapCenter={mapCenter}
         error={error}
+        loading={loading}
       />
     </div>
   );

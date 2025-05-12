@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Map } from "lucide-react";
+import { Map, AlertCircle, Search } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 import ProviderMap from "./ProviderMap";
 import { OnlineTherapist } from "@/services/onlineTherapyService";
@@ -12,6 +12,7 @@ interface SearchResultsProps {
   toggleMapView: () => void;
   mapCenter: [number, number];
   error: string;
+  loading?: boolean;
 }
 
 const ProviderSearchResults: React.FC<SearchResultsProps> = ({
@@ -19,10 +20,47 @@ const ProviderSearchResults: React.FC<SearchResultsProps> = ({
   showMap,
   toggleMapView,
   mapCenter,
-  error
+  error,
+  loading = false
 }) => {
-  if (providers.length === 0 && !error) {
-    return null;
+  // Don't show anything if there are no results yet and no search has been attempted
+  if (providers.length === 0 && !error && !loading) {
+    return (
+      <div className="mt-8 text-center p-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+        <Search className="mx-auto h-12 w-12 text-gray-400" />
+        <h3 className="mt-4 text-lg font-medium text-gray-700">Ready to find a provider?</h3>
+        <p className="mt-2 text-gray-500">
+          Enter your location above to search for online therapy providers in your area.
+        </p>
+      </div>
+    );
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="mt-8 text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+        <div className="max-w-md mx-auto">
+          <div className="animate-spin h-12 w-12 border-4 border-mindful-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h4 className="text-lg font-medium text-gray-700">Searching for providers...</h4>
+          <p className="text-gray-500 mt-2">This may take a moment.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="mt-8 text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+        <div className="max-w-md mx-auto">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h4 className="text-lg font-medium text-gray-700">Search Error</h4>
+          <p className="text-gray-500 mt-2">{error}</p>
+          <p className="text-gray-500 mt-4">Please adjust your search criteria and try again.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
