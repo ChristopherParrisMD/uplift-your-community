@@ -1,10 +1,10 @@
 
 import { toast } from "@/components/ui/use-toast";
 
-// Updated to point to the actual API endpoint
+// API credentials from environment variables or constants
 const API_KEY = "96026dea5d04541d19ecc08a2ed28c4a78da950cbb47653ed5eea66a6afbdde5";
 const NETWORK_ID = "onlinetherapy";
-const BASE_URL = "https://api.online-therapy.com/v1"; // Updated to the correct API version endpoint
+const BASE_URL = "https://api.online-therapy.com/v1";
 
 // Mock data to use as fallback when API is unavailable or in development
 const MOCK_PROVIDERS: OnlineTherapist[] = [
