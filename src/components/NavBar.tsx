@@ -31,6 +31,7 @@ const NavBar = () => {
           <div className="hidden md:ml-6 md:flex md:items-center md:space-x-8">
             <NavLink to="/">Home</NavLink>
             <NavLink to="/finding-help">Finding Help</NavLink>
+            <NavLink to="/find-provider">Find Provider</NavLink>
             <NavLink to="/blog">Blog</NavLink>
             <NavLink to="/resources">Resources</NavLink>
             <NavLink to="/about">About Us</NavLink>
@@ -62,6 +63,7 @@ const NavBar = () => {
         <div className="pt-2 pb-3 space-y-1 px-2">
           <MobileNavLink to="/" onClick={toggleMenu}>Home</MobileNavLink>
           <MobileNavLink to="/finding-help" onClick={toggleMenu}>Finding Help</MobileNavLink>
+          <MobileNavLink to="/find-provider" onClick={toggleMenu}>Find Provider</MobileNavLink>
           <MobileNavLink to="/blog" onClick={toggleMenu}>Blog</MobileNavLink>
           <MobileNavLink to="/resources" onClick={toggleMenu}>Resources</MobileNavLink>
           <MobileNavLink to="/about" onClick={toggleMenu}>About Us</MobileNavLink>
