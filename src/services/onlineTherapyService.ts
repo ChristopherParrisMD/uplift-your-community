@@ -1,3 +1,4 @@
+
 import { toast } from "@/components/ui/use-toast";
 
 // Updated to point to the actual API endpoint
@@ -6,7 +7,7 @@ const NETWORK_ID = "onlinetherapy";
 const BASE_URL = "https://api.online-therapy.com/v1"; // Updated to the correct API version endpoint
 
 // Mock data to use as fallback when API is unavailable or in development
-const MOCK_PROVIDERS = [
+const MOCK_PROVIDERS: OnlineTherapist[] = [
   {
     id: "p1",
     name: "Dr. Sarah Johnson",
@@ -15,7 +16,7 @@ const MOCK_PROVIDERS = [
     location: "New York, NY",
     rating: 4.9,
     reviews: 128,
-    coordinates: [40.7128, -74.0060],
+    coordinates: [40.7128, -74.0060] as [number, number],
     credentials: "Ph.D., Licensed Psychologist",
     languages: ["English", "Spanish"],
     gender: "Female",
@@ -32,7 +33,7 @@ const MOCK_PROVIDERS = [
     location: "Los Angeles, CA",
     rating: 4.8,
     reviews: 94,
-    coordinates: [34.0522, -118.2437],
+    coordinates: [34.0522, -118.2437] as [number, number],
     credentials: "Psy.D., Licensed Clinical Psychologist",
     languages: ["English", "Mandarin"],
     gender: "Male",
@@ -49,7 +50,7 @@ const MOCK_PROVIDERS = [
     location: "Chicago, IL",
     rating: 4.7,
     reviews: 76,
-    coordinates: [41.8781, -87.6298],
+    coordinates: [41.8781, -87.6298] as [number, number],
     credentials: "LMFT, Licensed Marriage & Family Therapist",
     languages: ["English"],
     gender: "Non-binary",
@@ -172,11 +173,16 @@ export async function searchProviders(params: {
     // Handle different API response formats
     const providers = Array.isArray(data) ? data : (data.providers || []);
     
-    // Extended data processing - enhance provider data
-    const enhancedProviders = providers.map((provider: OnlineTherapist) => {
-      // Add any additional processing here, like default availability data
+    // Extended data processing - enhance provider data and ensure coordinates are tuples
+    const enhancedProviders: OnlineTherapist[] = providers.map((provider: any) => {
+      // Ensure coordinates are always a tuple of [number, number]
+      const coordinates: [number, number] = Array.isArray(provider.coordinates) && provider.coordinates.length >= 2 
+        ? [provider.coordinates[0], provider.coordinates[1]]
+        : [0, 0]; // Default coordinates if none provided
+      
       return {
         ...provider,
+        coordinates,
         acceptingNewClients: provider.acceptingNewClients ?? Math.random() > 0.3,
         availability: provider.availability || ["Weekdays", "Evenings", "Weekends"][Math.floor(Math.random() * 3)],
         insurance: provider.insurance || "Multiple plans accepted"
