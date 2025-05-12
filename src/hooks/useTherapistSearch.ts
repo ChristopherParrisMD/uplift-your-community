@@ -1,7 +1,19 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { searchProviders, getLocationSuggestions, Provider } from "@/services/providerService";
+import { API_URL } from "@/constants/therapistSearch";
+
+interface Therapist {
+  id: string;
+  name: string;
+  image: string; // Added this to ensure consistency
+  specialty: string;
+  location: string;
+  rating: number;
+  reviews: number;
+  coordinates: [number, number];
+  [key: string]: any;
+}
 
 interface UseTherapistSearchProps {
   defaultMapCenter?: [number, number];
@@ -12,7 +24,7 @@ export const useTherapistSearch = ({ defaultMapCenter = [42.3314, -83.0458] }: U
   const [specialty, setSpecialty] = useState("");
   const [insurance, setInsurance] = useState("");
   const [sortBy, setSortBy] = useState("distance");
-  const [therapists, setTherapists] = useState<Provider[]>([]);
+  const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -37,8 +49,9 @@ export const useTherapistSearch = ({ defaultMapCenter = [42.3314, -83.0458] }: U
     setSearchLocation(value);
     if (value.length > 2) {
       try {
-        const suggestions = await getLocationSuggestions(value);
-        setSuggestions(suggestions);
+        const response = await fetch(`${API_URL}/locations?query=${encodeURIComponent(value)}`);
+        const data = await response.json();
+        setSuggestions(data);
       } catch (err) {
         console.error('Error fetching location suggestions:', err);
         setSuggestions([]);
@@ -64,32 +77,47 @@ export const useTherapistSearch = ({ defaultMapCenter = [42.3314, -83.0458] }: U
     setTherapists([]);
 
     try {
-      const results = await searchProviders({
-        location: searchLocation.trim(),
-        specialty: specialty || undefined,
-        insurance: insurance || undefined,
-        sortBy: sortBy || undefined,
-      });
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (searchLocation.trim()) params.append('location', searchLocation.trim());
+      if (specialty) params.append('specialty', specialty);
+      if (insurance) params.append('insurance', insurance);
+      if (sortBy) params.append('sortBy', sortBy);
+
+      console.log('Searching with params:', params.toString());
+      const response = await fetch(`${API_URL}/therapists?${params.toString()}`);
       
-      if (results.length === 0) {
-        setError("No providers found matching your criteria. Try adjusting your search parameters.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch therapists');
+      }
+      
+      const data = await response.json();
+      console.log('Search results:', data);
+      
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format from server');
+      }
+      
+      if (data.length === 0) {
+        setError("No therapists found matching your criteria. Try adjusting your search parameters.");
         toast({
           title: "No Results",
-          description: "No providers found matching your criteria. Try adjusting your search parameters.",
+          description: "No therapists found matching your criteria. Try adjusting your search parameters.",
           variant: "destructive"
         });
       } else {
-        setTherapists(results);
+        setTherapists(data);
         
         // Set map center to the first result's coordinates if available
-        if (results[0]?.coordinates) {
-          setMapCenter(results[0].coordinates);
+        if (data[0]?.coordinates) {
+          setMapCenter(data[0].coordinates);
         }
         
-        setShowMap(false); // Start with list view
+        setShowMap(true);
         toast({
           title: "Search Complete",
-          description: `Found ${results.length} providers matching your criteria.`
+          description: `Found ${data.length} therapists matching your criteria.`
         });
       }
     } catch (err: any) {
@@ -107,13 +135,10 @@ export const useTherapistSearch = ({ defaultMapCenter = [42.3314, -83.0458] }: U
   };
 
   const toggleMapView = () => setShowMap(!showMap);
-  
   const setLocationAndSearch = (location: string) => {
     setSearchLocation(location);
     setSuggestions([]);
-    setTimeout(() => {
-      handleSearch();
-    }, 100);
+    handleSearch();
   };
 
   return {
