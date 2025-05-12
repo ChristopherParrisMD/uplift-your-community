@@ -21,8 +21,8 @@ interface UseTherapistSearchProps {
 
 export const useTherapistSearch = ({ defaultMapCenter = [42.3314, -83.0458] }: UseTherapistSearchProps = {}) => {
   const [searchLocation, setSearchLocation] = useState("");
-  const [specialty, setSpecialty] = useState("");
-  const [insurance, setInsurance] = useState("");
+  const [specialty, setSpecialty] = useState("any");
+  const [insurance, setInsurance] = useState("any");
   const [sortBy, setSortBy] = useState("distance");
   const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [loading, setLoading] = useState(false);
@@ -80,8 +80,8 @@ export const useTherapistSearch = ({ defaultMapCenter = [42.3314, -83.0458] }: U
       // Build query parameters
       const params = new URLSearchParams();
       if (searchLocation.trim()) params.append('location', searchLocation.trim());
-      if (specialty) params.append('specialty', specialty);
-      if (insurance) params.append('insurance', insurance);
+      if (specialty && specialty !== "any") params.append('specialty', specialty);
+      if (insurance && insurance !== "any") params.append('insurance', insurance);
       if (sortBy) params.append('sortBy', sortBy);
 
       console.log('Searching with params:', params.toString());

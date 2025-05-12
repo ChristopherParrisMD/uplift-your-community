@@ -34,7 +34,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             <SelectValue placeholder="Select specialty" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Specialty</SelectItem>
+            <SelectItem value="any">Any Specialty</SelectItem>
             {specialties.map((spec) => (
               <SelectItem key={spec} value={spec.toLowerCase()}>
                 {spec}
@@ -51,7 +51,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             <SelectValue placeholder="Select insurance" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Insurance</SelectItem>
+            <SelectItem value="any">Any Insurance</SelectItem>
             {insuranceOptions.map((ins) => (
               <SelectItem key={ins} value={ins.toLowerCase()}>
                 {ins}

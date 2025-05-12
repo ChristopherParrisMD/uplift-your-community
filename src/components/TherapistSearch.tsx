@@ -21,7 +21,7 @@ L.Icon.Default.mergeOptions({
 interface Therapist {
   id: string;
   name: string;
-  image: string; // Added the missing image property
+  image: string;
   specialty: string;
   location: string;
   rating: number;
