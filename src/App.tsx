@@ -19,6 +19,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import FindProvider from "./pages/FindProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UpdatePassword from "./pages/UpdatePassword";
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
+            <Route path="/find-provider" element={<FindProvider />} />
             <Route 
               path="/blog-admin" 
               element={
